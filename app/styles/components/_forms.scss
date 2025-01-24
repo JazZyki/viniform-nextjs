@@ -1,0 +1,15 @@
+@use '../basic' as b;
+
+input {
+    &[type="text"],
+    &[type="email"],
+    &[type="password"] {
+        transition: b.$transition;
+        &:focus, 
+        &:focus-visible,
+        &:focus-within {
+            outline:none;
+            border:  1px solid b.$basic-green2;
+        }
+    }
+}

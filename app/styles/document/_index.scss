@@ -1,0 +1,10 @@
+@use '../basic/' as b;
+body {
+    font-size: b.$font-size;
+    @include b.basic-font;
+    background-color: b.$basic-background;
+
+    > * {
+        color: b.$basic-black;
+    }
+}

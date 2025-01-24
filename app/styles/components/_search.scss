@@ -1,0 +1,13 @@
+.search {
+    position: relative;
+    
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        background-color: #fff;
+        top: 44px;
+        padding: 1rem;
+        border-radius: 5px;
+        box-shadow: 0 0 5px;
+    }
+}
