@@ -19,9 +19,11 @@ export default function SplitterPage() {
 
   return (
     <div>
-      <h1>Choose a Form</h1>
-      <button onClick={() => navigateToForm("/form1")}>Go to Form 1</button>
-      <button onClick={() => navigateToForm("/form2")}>Go to Form 2</button>
+      <h1>Co chcete vyplňovat?</h1>
+      <div className="flex flex-col justify-center gap-4 mt-4">
+        <button className="btn btn-primary" onClick={() => navigateToForm("/form1")}>Poškození po kroupách</button>
+        <button className="btn btn-primary" onClick={() => navigateToForm("/form2")}>Poškození z parkoviště</button>
+      </div>
     </div>
   );
 }

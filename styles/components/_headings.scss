@@ -1,0 +1,9 @@
+@use '../basic' as b;
+
+h1 {
+    color: b.$basic-green;
+    font-size: 1.875rem !important;
+    line-height: 2.25rem;
+    text-align: center;
+    text-transform: uppercase;
+}

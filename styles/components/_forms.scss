@@ -1,0 +1,39 @@
+@use '../basic/index' as b;
+
+input {
+
+    &[type="text"],
+    &[type="email"],
+    &[type="password"] {
+        width: 100%;
+        //margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+        transition: b.$transition;
+        border: 1px solid b.$basic-green;
+        border-radius: 1rem;
+        font-size: 1.2rem;
+
+        &:focus,
+        &:focus-visible,
+        &:focus-within {
+            outline: none;
+            border: 1px solid b.$basic-green2;
+        }
+    }
+}
+
+select {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid b.$basic-green;
+    border-radius: 1rem;
+    font-size: 1.2rem !important;
+    padding: 0.6rem 1rem !important;
+
+    &:focus,
+    &:focus-visible,
+    &:focus-within {
+        outline: none;
+        border: 1px solid b.$basic-green2;
+    }
+}

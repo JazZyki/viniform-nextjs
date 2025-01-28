@@ -54,53 +54,100 @@ export default function FormPage() {
 
     return (
         <div>
-            <h1 className="pb-8 pt-4 mt-4 mb-4 border-b-2 border-maingreen text-center">logo</h1>
-
             {step === 1 && (
                 <>
-                    <div className="flex stepper">
-                        <div className="flex flex-col step">
-                            <div className="stepper__step-icon flex justify-center items-center bg-secondarygreen radius-full">
-                                <p className=" text-white text-3xl font-bold size-30">1</p>
+                    <div className="stepper">
+                        <div className="step active">
+                            <div className="step-icon">
+                                <p>1</p>
                             </div>
-                            <div className="stepper__step-text">
-                                <p className="text-sm">Základní údaje</p>
-                            </div>
-                        </div>
-                        <div className="stepper__step stepper__step--second">
-                            <div className="stepper__step-icon">
-                                <p>2
-                                </p>
-                            </div>
-                            <div className="stepper__step-text">
-                                <p>Foto globální
-                                </p>
+                            <div className="step-text">
+                                <p>Základní údaje</p>
                             </div>
                         </div>
-                        <div className="stepper__step stepper__step--third">
-                            <div className="stepper__step-icon">
-                                <p>3
-                                </p>
+                        <div className="step">
+                            <div className="step-icon">
+                                <p>2</p>
                             </div>
-                            <div className="stepper__step-text">
-                                <p>Foto detaily
-                                </p>
+                            <div className="step-text">
+                                <p>Foto globální</p>
+                            </div>
+                        </div>
+                        <div className="step">
+                            <div className="step-icon">
+                                <p>3</p>
+                            </div>
+                            <div className="step-text">
+                                <p>Foto detaily</p>
                             </div>
                         </div>
                     </div>
                     <form>
-                        <h2 className="active">Krok 1: Základní informace</h2>
-                        <h3 className="unactive">Krok 2: fotografie celku</h3>
-                        <h3 className="unactive">Krok 3: fotografie detailů</h3>
+                        <div className="form-field">
+                            <p className="form-field__label">Technik</p>
+                            <label className="form-field__input flex flex-col">Uživatelské jméno
+                                <input
+                                    type="text"
+                                    name="technician"
+                                    value={formData.technician}
+                                    readOnly
+                                    className="bg-gray-200 pointer-events-none"
+                                />
+                            </label>
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">Údaje o vozidle</p>
+                            <label className="form-field__input flex flex-col required">Značka vozidla
+                                <select
+                                    name="option"
+                                    value={formData.option}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>
+                                        Vyberte značku
+                                    </option>
+                                    <option value="Alfa Romeo">Alfa Romeo</option>
+                                    <option value="Audi">Audi</option>
+                                    <option value="BMW">BMW</option>
+                                    <option value="Citroën">Citroën</option>
+                                    <option value="Dacia">Dacia</option>
+                                    <option value="Fiat">Fiat</option>
+                                    <option value="Ford">Ford</option>
+                                    <option value="Honda">Honda</option>
+                                    <option value="Hyundai">Hyundai</option>
+                                    <option value="KIA">KIA</option>
+                                    <option value="Mazda">Mazda</option>
+                                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                                    <option value="Mitsubishi">Mitsubishi</option>
+                                    <option value="Nissan">Nissan</option>
+                                    <option value="Opel">Opel</option>
+                                    <option value="Peugeot">Peugeot</option>
+                                    <option value="Renault">Renault</option>
+                                    <option value="Seat">Seat</option>
+                                    <option value="Subaru">Subaru</option>
+                                    <option value="Suzuki">Suzuki</option>
+                                    <option value="Škoda">Škoda</option>
+                                    <option value="Toyota">Toyota</option>
+                                    <option value="Volkswagen">Volkswagen</option>
+                                    <option value="Volvo">Volvo</option>
+                                    <option value="Jiné - upřesním níže">Jiné - upřesním níže</option>
+                                </select>
+                            </label>
+
+                            <label className="form-field__input flex flex-col required">Druh vozidla
+                                <input
+                                    type="text"
+                                    name="type"
+                                    placeholder="Octavia, Fabia, Kamiq, ..."
+                                    value={formData.type}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+                        </div>
 
                         <label className="flex flex-col"><span>Vaše údaje</span>
-                            <input
-                                type="text"
-                                name="technician"
-                                value={formData.technician}
-                                readOnly
-                                className="p-2 border border-maingreen bg-gray-200 pointer-events-none"
-                            />
                         </label>
                         <input
                             type="text"
@@ -118,18 +165,6 @@ export default function FormPage() {
                             />
                             I agree to the terms
                         </label>
-                        <select
-                            name="option"
-                            value={formData.option}
-                            onChange={handleChange}
-                        >
-                            <option value="" disabled>
-                                Select an option
-                            </option>
-                            <option value="option1">Option 1</option>
-                            <option value="option2">Option 2</option>
-                            <option value="option3">Option 3</option>
-                        </select>
 
                         <button type="button" onClick={nextStep}>
                             Next

@@ -26,20 +26,23 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h1 className="text-3xl">Přihlašte se do aplikace</h1>
+      <h1>Přihlašte se do aplikace</h1>
+      <div className="flex justify-center items-center flex-col mt-6 gap-4">
       <input
         type="text"
-        placeholder="Username"
+        placeholder="uživatelské jméno..."
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <input
         type="password"
-        placeholder="Password"
+        placeholder="heslo..."
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button className="btn btn-primary" onClick={handleLogin}>Přihlásit se...</button>
+      <button className="btn btn-primary" onClick={handleLogin}>Přihlásit se</button>
+
+      </div>
     </div>
   );
 }
