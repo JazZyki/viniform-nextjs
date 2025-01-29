@@ -1,39 +1,105 @@
 @use '../basic/index' as b;
 
 input {
-
     &[type="text"],
     &[type="email"],
-    &[type="password"] {
+    &[type="password"], 
+    &[type="number"],
+    &[type="tel"], 
+    &[type="date"]{
         width: 100%;
         //margin-bottom: 1rem;
         padding: 0.5rem 1rem;
         transition: b.$transition;
-        border: 1px solid b.$basic-green;
+        border: 1px solid b.$basic-grey;
         border-radius: 1rem;
         font-size: 1.2rem;
+        transition: b.$transition;
 
         &:focus,
         &:focus-visible,
         &:focus-within {
-            outline: none;
-            border: 1px solid b.$basic-green2;
+            outline: 1px solid b.$basic-green;
+            border: 1px solid b.$basic-green;
+        }
+
+        &:disabled {
+            background-color: b.$basic-grey2;
+            //color: b.$basic-white;
         }
     }
 }
 
-select {
+select,
+textarea {
     width: 100%;
     background-color: #fff;
-    border: 1px solid b.$basic-green;
+    border: 1px solid b.$basic-grey;
     border-radius: 1rem;
     font-size: 1.2rem !important;
     padding: 0.6rem 1rem !important;
+    transition: b.$transition;
 
     &:focus,
     &:focus-visible,
     &:focus-within {
-        outline: none;
-        border: 1px solid b.$basic-green2;
+        outline: 1px solid b.$basic-green;
+        border: 1px solid b.$basic-green;
+    }
+}
+
+.form-field {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid b.$basic-green;
+    border-radius: 1rem 1rem 0 0;
+
+    .form-field__label {
+        position: absolute;
+        top: -1rem;
+        left: 1rem;
+        background-color: b.$basic-white;
+        padding: 0 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: b.$basic-green;
+    }
+
+    label {
+        margin-bottom: 1rem;
+        position: relative;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .required {
+            display: inline-block;
+            color: b.$basic-green;
+            font-weight: 700;
+            margin-left: 0.25rem;
+        }        
+    }
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .input-group-text {
+        background-color: b.$basic-grey2;
+        color: b.$basic-grey;
+        padding: 0.5rem 1rem;
+        border: 1px solid b.$basic-grey;
+        border-right: 0;
+        border-radius: 1rem 0 0 1rem;
+        font-size: 1.2rem;
+
+        + input {
+            border-radius: 0 1rem 1rem 0;
+        }
     }
 }

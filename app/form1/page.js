@@ -85,22 +85,22 @@ export default function FormPage() {
                     <form>
                         <div className="form-field">
                             <p className="form-field__label">Technik</p>
-                            <label className="form-field__input flex flex-col">Uživatelské jméno
+                            <label className="form-field__input flex flex-col disabled">Uživatelské jméno
                                 <input
                                     type="text"
                                     name="technician"
                                     value={formData.technician}
                                     readOnly
-                                    className="bg-gray-200 pointer-events-none"
+                                    disabled
                                 />
                             </label>
                         </div>
                         <div className="form-field">
                             <p className="form-field__label">Údaje o vozidle</p>
-                            <label className="form-field__input flex flex-col required">Značka vozidla
+                            <label className="form-field__input flex flex-row flex-wrap">Značka vozidla <span className="required">*</span>
                                 <select
-                                    name="option"
-                                    value={formData.option}
+                                    name="vehicleBrand"
+                                    value={formData.vehicleBrand}
                                     onChange={handleChange}
                                     required
                                 >
@@ -135,40 +135,194 @@ export default function FormPage() {
                                 </select>
                             </label>
 
-                            <label className="form-field__input flex flex-col required">Druh vozidla
+                            <label className="form-field__input flex flex-row flex-wrap">Druh vozidla <span className="required">*</span>
                                 <input
                                     type="text"
-                                    name="type"
+                                    name="vehicleType"
                                     placeholder="Octavia, Fabia, Kamiq, ..."
-                                    value={formData.type}
+                                    value={formData.vehicleType}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">SPZ vozidla<span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="vehicleSPZ"
+                                    placeholder="XXX XX-XX"
+                                    value={formData.vehicleSPZ}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">VIN <span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="vehicleVIN"
+                                    placeholder="17 znaků"
+                                    value={formData.vehicleVIN}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Barva vozidla
+                                <input
+                                    type="text"
+                                    name="vehicleColor"
+                                    placeholder="Černá, bílá, modrá, ..."
+                                    value={formData.vehicleColor}
+                                    onChange={handleChange}
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Stav tachometru <span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="vehicleDistance"
+                                    placeholder="X XXX km"
+                                    value={formData.vehicleDistance}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Pojišťovna <span className="required">*</span>
+                                <select
+                                    name="insuranceCompany"
+                                    value={formData.insuranceCompany}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>
+                                        Vyberte Pojišťovnu
+                                    </option>
+                                    <option value="Allianz">Allianz</option>
+                                    <option value="AXA">AXA</option>
+                                    <option value="ČPP">ČPP</option>
+                                    <option value="ČSOB Pojišťovna">ČSOB Pojišťovna</option>
+                                    <option value="Direct">Direct</option>
+                                    <option value="Generali">Generali</option>
+                                    <option value="Kooperativa">Kooperativa</option>
+                                    <option value="Pillow">Pillow</option>
+                                    <option value="Servisní pojišťovna">Servisní pojišťovna</option>
+                                    <option value="Slavia">Slavia</option>
+                                    <option value="VZP">VZP</option>
+                                    <option value="Ostatní">Ostatní</option>
+                                </select>
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Č.P.U. <span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="insuranceNumber"
+                                    placeholder="XXXX"
+                                    value={formData.insuranceNumber}
                                     onChange={handleChange}
                                     required
                                 />
                             </label>
                         </div>
 
-                        <label className="flex flex-col"><span>Vaše údaje</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="surname"
-                            placeholder="Surname"
-                            value={formData.surname}
-                            onChange={handleChange}
-                        />
-                        <label>
-                            <input
-                                type="checkbox"
-                                name="agree"
-                                checked={formData.agree}
-                                onChange={handleChange}
-                            />
-                            I agree to the terms
-                        </label>
+                        <div className="form-field">
+                            <p className="form-field__label">Majitel / provozovatel</p>
+                            <label className="form-field__input flex flex-row flex-wrap">Jméno a příjmení <span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="customerName"
+                                    placeholder="Josef Vomáčka"
+                                    value={formData.customerName}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
 
-                        <button type="button" onClick={nextStep}>
+                            <label className="form-field__input flex flex-row flex-wrap">Adresa <span className="required">*</span>
+                                <input
+                                    type="text"
+                                    name="customerAddress"
+                                    placeholder="Josef Vomáčka"
+                                    value={formData.customerAddress}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Telefonní číslo <span className="required">*</span>
+                                <div className="input-group">
+                                    <span className="input-group-text">+420</span>
+                                <input
+                                    type="tel"
+                                    name="customerPhone"
+                                    placeholder="777 777 777"
+                                    value={formData.customerPhone}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                </div>
+                            </label>
+                        </div>
+
+                        <div className="form-field">
+                            <p className="form-field__label">Zakázka - údaje</p>
+                            <label className="form-field__input flex flex-row flex-wrap">Datum přijetí
+                                <input
+                                    type="date"
+                                    name="serviceDate"
+                                    value={formData.serviceDate}
+                                    onChange={handleChange}
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">&#8960; krupobití
+                                <input
+                                    type="text"
+                                    name="hailsDiameter"
+                                    value={formData.hailsDiameter}
+                                    onChange={handleChange}
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">M + D
+                                <input
+                                    type="text"
+                                    name="contractMD"
+                                    placeholder=""
+                                    value={formData.contractMD}
+                                    onChange={handleChange}
+                                />
+                            </label>
+
+                            <label className="form-field__input flex flex-row flex-wrap">Poškození laku
+                                <input
+                                    type="text"
+                                    name="contractPaint"
+                                    placeholder=""
+                                    value={formData.contractPaint}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                        </div>
+
+                        <div className="form-field">
+                            <p className="form-field__label">Poznámky k detailním fotografiím</p>
+                            <label className="form-field__input flex flex-col">Poznámky
+                                <textarea
+                                    name="notes"
+                                    placeholder="Případné poznámky k fotografiím detailů"
+                                    value={formData.detailNotes}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                        </div>
+                        <div className="buttons">
+                        <button type="button" className="btn btn-primary btn-next" onClick={nextStep}>
                             Next
                         </button>
+
+                        </div>
                     </form>
                 </>
             )}
