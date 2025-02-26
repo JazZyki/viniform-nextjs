@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "file-saver": "^2.0.5",
+    "jspdf": "^3.0.0",
+    "jszip": "^3.10.1",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
