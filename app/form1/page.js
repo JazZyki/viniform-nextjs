@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+//import Image from "next/image";
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -28,6 +29,17 @@ export default function FormPage() {
         detailNotes: '',
         field1Images: Array(3).fill(""),
         field2Images: Array(3).fill(""),
+        field3Images: Array(3).fill(""),
+        field4Images: Array(3).fill(""),
+        field5Images: Array(3).fill(""),
+        field6Images: Array(3).fill(""),
+        field7Images: Array(3).fill(""),
+        field8Images: Array(3).fill(""),
+        field9Images: Array(3).fill(""),
+        field10Images: Array(3).fill(""),
+        field11Images: Array(3).fill(""),
+        field12Images: Array(3).fill(""),
+        field13Images: Array(3).fill(""),
     });
     const router = useRouter();
 
@@ -387,8 +399,8 @@ export default function FormPage() {
                         </div>
 
                         <div className="form-field">
-                            <p className="form-field__label">Poznámky k detailním fotografiím</p>
-                            <label className="form-field__input flex flex-col">Poznámky
+                            <p className="form-field__label">Poznámky</p>
+                            <label className="form-field__input flex flex-col">
                                 <textarea
                                     name="notes"
                                     placeholder="Případné poznámky k fotografiím detailů"
@@ -397,7 +409,7 @@ export default function FormPage() {
                                 />
                             </label>
                         </div>
-                        <div className="buttons">
+                        <div className="buttons flex justify-end">
                             <button type="button" className="btn btn-primary btn-next" onClick={nextStep}>
                                 Další krok
                             </button>
@@ -435,9 +447,16 @@ export default function FormPage() {
                             </div>
                         </div>
                     </div>
+                    <img 
+                        src="/auto_global.svg" 
+                        alt="Zakazkovy list" 
+                        width={300} 
+                        height={300} 
+                        className="w-full mb-8"
+                    />
                     <form onSubmit={handleSubmit}>
                         <div className="form-field">
-                            <p className="form-field__label">Zápis o poškození</p>
+                            <p className="form-field__label">0 - Zápis o poškození</p>
                             {formData.field1Images.map((image, index) => (
                                 <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                     <label>
@@ -454,27 +473,228 @@ export default function FormPage() {
                             ))}
                         </div>
                         <div className="form-field">
-                            <p className="form-field__label">Zápis o poškození</p>
-                            {formData.field2Images.map((image, index) => (
-                                <div key={index} className="form-field__input flex flex-row flex-wrap mb-2">
-                                    <label className="custom-file-upload">
-                                        {index + 1}. Zápis o poškození
+                            <p className="form-field__label">1 - Pohled zepředu</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
                                         <input
                                             type="file"
                                             accept="image/*"
                                             capture="camera"
                                             onChange={(e) => handleImageChange('field2Images', index, e.target.files[0])}
-                                            disabled={index > 0 && !formData.field2Images[index - 1]}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
                                         />
-                                        <span className="file-upload-text"></span>
                                     </label>
                                 </div>
                             ))}
                         </div>
+                        <div className="form-field">
+                            <p className="form-field__label">2 - Pohled zepředu zleva</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field3Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">3 - Pohled zleva</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field4Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">4 - Pohled zezadu zleva</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field5Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">5 - Pohled zezadu</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field6Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">6 - Pohled zezadu zprava</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field7Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">7 - Pohled zprava</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field8Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">8 - Pohled zepředu zprava</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field9Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">9 - STK</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field10Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">10 - VIN</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field11Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">11 - Stav tachometru</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field12Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">12 - Interiér</p>
+                            {formData.field1Images.map((image, index) => (
+                                <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
+                                    <label>
+                                        Foto č. {index + 1} &nbsp;
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            capture="camera"
+                                            onChange={(e) => handleImageChange('field13Images', index, e.target.files[0])}
+                                            disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        />
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="form-field">
+                            <p className="form-field__label">Poznámky k fotografiím globálního stavu</p>
+                            <label className="form-field__input flex flex-col">
+                                <textarea
+                                    name="notes"
+                                    placeholder="Případné poznámky..."
+                                    value={formData.globalPhotograpfyNotess || ""}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                        </div>
+
+                        <div className="buttons flex justify-between mb-8">
                         <button className="btn btn-secondary" type="button" onClick={prevStep}>
-                            Zpátky na základní údaje
+                            Zpět
                         </button>
-                        <button className="btn btn-primary" type="submit">Na další krok</button>
+                        <button className="btn btn-primary" type="submit">Další</button>
+
+                        </div>
                     </form>
                 </>
             )}
