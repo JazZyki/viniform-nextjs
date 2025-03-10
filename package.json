@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "file-saver": "^2.0.5",
+    "googleapis": "^146.0.0",
     "jspdf": "^3.0.0",
     "jszip": "^3.10.1",
     "next": "15.1.6",
