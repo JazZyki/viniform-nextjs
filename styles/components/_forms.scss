@@ -106,12 +106,13 @@ input[type="file"] {
             background: b.$basic-green2;
         }
     }
+
     .detail-info {
         .form-field__input {
             &:first-of-type {
                 margin-top: 0;
             }
-        }       
+        }
     }
 
     label {
@@ -145,9 +146,97 @@ input[type="file"] {
         border-right: 0;
         border-radius: 1rem 0 0 1rem;
         font-size: 1.2rem;
+        
 
         +input {
             border-radius: 0 1rem 1rem 0;
+        }
+    }
+    &.reverse {
+        .input-group-text {
+            border-radius: 0 1rem 1rem 0;
+            border-left: 0;
+            border-right: 1px solid b.$basic-grey;
+        }
+
+        input {
+            border-radius: 1rem 0 0 1rem;
+        }       
+    }
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 140px;
+    height: 57px;
+    margin-bottom: 0 !important;
+
+    &::before{
+        content: 'NE';
+        left: 10px;
+    }
+    &::after{
+        content: 'ANO';
+        right: 0%;
+    }
+    &::before, 
+    &::after {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 75%;        
+        font-size: 1.2rem;
+        color: b.$basic-black;
+
+    }
+    input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked+.slider {
+            background-color: b.$basic-green;
+
+            &:before {
+                -webkit-transform: translateX(25px);
+                -ms-transform: translateX(25px);
+                transform: translateX(25px);
+            }
+        }
+
+        &:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 29px;
+        left: 27px;
+        right: 59px;
+        bottom: 0;
+        background-color: b.$basic-grey;
+        -webkit-transition: .4s;
+        transition: .4s;
+
+        &::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        &.round {
+            border-radius: 34px;
+            &::before {
+                border-radius: 50%;
+            }
         }
     }
 }

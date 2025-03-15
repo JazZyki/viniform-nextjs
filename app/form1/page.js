@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-//import Image from "next/image";
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         technician: '',
         vehicleBrand: '',
         vehicleType: '',
@@ -42,21 +41,75 @@ export default function FormPage() {
         tachometr: Array(3).fill(""),
         interier: Array(3).fill(""),
         kapota: Array(3).fill(""),
+        kapotaCount: 0,
+        kapotaDiameter: 0,
+        kapotaLak: false,
+        kapotaVymena: false,
         levyPredniBlatnik: Array(3).fill(""),
+        levyPredniBlatnikCount: 0,
+        levyPredniBlatnikDiameter: 0,
+        levyPredniBlatnikLak: false,
+        levyPredniBlatnikVymena: false,
         levePredniDvere: Array(3).fill(""),
+        levePredniDvereCount: 0,
+        levePredniDvereDiameter: 0,
+        levePredniDvereLak: false,
+        levePredniDvereVymena: false,
         leveZadniDvere: Array(3).fill(""),
+        leveZadniDvereCount: 0,
+        leveZadniDvereDiameter: 0,
+        leveZadniDvereLak: false,
+        leveZadniDvereVymena: false,
         leveZadniBlatniky: Array(3).fill(""),
+        leveZadniBlatnikyCount: 0,
+        leveZadniBlatnikyDiameter: 0,
+        leveZadniBlatnikyLak: false,
+        leveZadniBlatnikyVymena: false,
         zadniKapota: Array(3).fill(""),
+        zadniKapotaCount: 0,
+        zadniKapotaDiameter: 0,
+        zadniKapotaLak: false,
+        zadniKapotaVymena: false,
         levyRam: Array(3).fill(""),
+        levyRamCount: 0,
+        levyRamDiameter: 0,
+        levyRamLak: false,
+        levyRamVymena: false,
         strecha: Array(3).fill(""),
+        strechaCount: 0,
+        strechaDiameter: 0,
+        strechaLak: false,
+        strechaVymena: false,
         pravyRam: Array(3).fill(""),
+        pravyRamCount: 0,
+        pravyRamDiameter: 0,
+        pravyRamLak: false,
+        pravyRamVymena: false,
         pravyZadniBlatnik: Array(3).fill(""),
+        pravyZadniBlatnikCount: 0,
+        pravyZadniBlatnikDiameter: 0,
+        pravyZadniBlatnikLak: false,
+        pravyZadniBlatnikVymena: false,
         praveZadniDvere: Array(3).fill(""),
+        praveZadniDvereCount: 0,
+        praveZadniDvereDiameter: 0,
+        praveZadniDvereLak: false,
+        praveZadniDvereVymena: false,
         pravePredniDvere: Array(3).fill(""),
+        pravePredniDvereCount: 0,
+        pravePredniDvereDiameter: 0,
+        pravePredniDvereLak: false,
+        pravePredniDvereVymena: false,
         pravyPredniBlatnik: Array(3).fill(""),
+        pravyPredniBlatnikCount: 0,
+        pravyPredniBlatnikDiameter: 0,
+        pravyPredniBlatnikLak: false,
+        pravyPredniBlatnikVymena: false,
         dodatecneFoto1: Array(3).fill(""),
         dodatecneFoto2: Array(3).fill(""),
-    });
+        pravyPredniBlatnikLak: false,
+    }
+    const [formData, setFormData] = useState(initialFormData);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
 
@@ -82,6 +135,13 @@ export default function FormPage() {
             [name]: value,
         });
     };
+    const handleCheckboxChange = (e) => {
+        const { name, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: checked,
+        });
+    };
 
     const handleImageChange = (field, index, file) => {
         const updatedImages = [...formData[field]];
@@ -92,8 +152,14 @@ export default function FormPage() {
         });
     };
 
-    const nextStep = () => setStep((prev) => prev + 1);
-    const prevStep = () => setStep((prev) => prev - 1);
+    const nextStep = () => {
+        setStep((prev) => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    const prevStep = () => {
+        setStep((prev) => prev - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     const resizeAndCompressImage = (file, maxWidth, maxHeight, maxSizeKB) => {
         return new Promise((resolve, reject) => {
@@ -161,11 +227,8 @@ export default function FormPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (step < 3) {
-            console.log(step);
             nextStep();
         } else {
-            console.log(step);
-
             // Create PDF
             const doc = new jsPDF();
             doc.setFont("courier", "bold");
@@ -191,19 +254,125 @@ export default function FormPage() {
                     insuranceCompany: { x: 14, y: 80 },
                     insuranceNumber: { x: 56, y: 80 },
                     customerName: { x: 14, y: 51 },
-                    customerAddress: { x: 10, y: 120 },
+                    //customerAddress: { x: 10, y: 120 },
                     customerPhone: { x: 122, y: 51 },
-                    serviceDate: { x: 10, y: 140 },
-                    hailsDiameter: { x: 10, y: 150 },
-                    contractMD: { x: 10, y: 160 },
-                    contractPaint: { x: 10, y: 170 },
+                    serviceDate: { x: 14, y: 93 },
+                    //hailsDiameter: { x: 10, y: 150 },
+                    //contractMD: { x: 10, y: 160 },
+                    //contractPaint: { x: 10, y: 170 },
                     detailNotes: { x: 14, y: 231 },
+                    kapotaCount: { x: 50, y: 141 },
+                    kapotaDiameter: { x: 75, y: 141 },
+                    levyPredniBlatnikCount: { x: 50, y: 147 },
+                    levyPredniBlatnikDiameter: { x: 75, y: 147 },
+                    levePredniDvereCount: { x: 50, y: 153 },
+                    levePredniDvereDiameter: { x: 75, y: 153 },
+                    leveZadniDvereCount: { x: 50, y: 159 },
+                    leveZadniDvereDiameter: { x: 75, y: 159 },
+                    leveZadniBlatnikyCount: { x: 50, y: 165 },
+                    leveZadniBlatnikyDiameter: { x: 75, y: 165 },
+                    levyRamCount: { x: 50, y: 171 },
+                    levyRamDiameter: { x: 75, y: 171 },
+                    zadniKapotaCount: { x: 50, y: 177 },
+                    zadniKapotaDiameter: { x: 75, y: 177 },
+                    pravyPredniBlatnikCount: { x: 50, y: 189 },
+                    pravyPredniBlatnikDiameter: { x: 75, y: 189 },
+                    pravePredniDvereCount: { x: 50, y: 195 },
+                    pravePredniDvereDiameter: { x: 75, y: 195 },
+                    praveZadniDvereCount: { x: 50, y: 201 },
+                    praveZadniDvereDiameter: { x: 75, y: 201 },
+                    pravyZadniBlatnikCount: { x: 50, y: 207 },
+                    pravyZadniBlatnikDiameter: { x: 75, y: 207 },
+                    pravyRamCount: { x: 50, y: 213 },
+                    pravyRamDiameter: { x: 75, y: 213 },
+                    strechaCount: { x: 50, y: 219 },
+                    strechaDiameter: { x: 75, y: 219 },
                 };
 
                 // Add text fields to the PDF
                 Object.keys(positions).forEach((key) => {
                     doc.text(`${formData[key]}`, positions[key].x, positions[key].y);
                 });
+
+                // Add checkboxes to the PDF
+                if (formData.kapotaLak) {
+                    doc.text("X", 100, 141);
+                }
+                if (formData.kapotaVymena) {
+                    doc.text("X", 120, 141);
+                }
+                if (formData.levyPredniBlatnikLak) {
+                    doc.text("X", 100, 147);
+                }
+                if (formData.levyPredniBlatnikVymena) {
+                    doc.text("X", 120, 147);
+                }
+                if (formData.levePredniDvereLak) {
+                    doc.text("X", 100, 153);
+                }
+                if (formData.levePredniDvereVymena) {
+                    doc.text("X", 120, 153);
+                }
+                if (formData.leveZadniDvereLak) {
+                    doc.text("X", 100, 159);
+                }
+                if (formData.leveZadniDvereVymena) {
+                    doc.text("X", 120, 159);
+                }
+                if (formData.leveZadniBlatnikyLak) {
+                    doc.text("X", 100, 165);
+                }
+                if (formData.leveZadniBlatnikyVymena) {
+                    doc.text("X", 120, 165);
+                }
+                if (formData.levyRamLak) {
+                    doc.text("X", 100, 171);
+                }
+                if (formData.levyRamVymena) {
+                    doc.text("X", 120, 171);
+                }
+                if (formData.zadniKapotaLak) {
+                    doc.text("X", 100, 177);
+                }
+                if (formData.zadniKapotaVymena) {
+                    doc.text("X", 120, 177);
+                }
+                if (formData.pravyPredniBlatnikLak) {
+                    doc.text("X", 100, 189);
+                }
+                if (formData.pravyPredniBlatnikVymena) {
+                    doc.text("X", 120, 189);
+                }
+                if (formData.pravePredniDvereLak) {
+                    doc.text("X", 100, 195);
+                }
+                if (formData.pravePredniDvereVymena) {
+                    doc.text("X", 120, 195);
+                }
+                if (formData.praveZadniDvereLak) {
+                    doc.text("X", 100, 201);
+                }
+                if (formData.praveZadniDvereVymena) {
+                    doc.text("X", 120, 201);
+                }
+                if (formData.pravyZadniBlatnikLak) {
+                    doc.text("X", 100, 207);
+                }
+                if (formData.pravyZadniBlatnikVymena) {
+                    doc.text("X", 120, 207);
+                }
+                if (formData.pravyRamLak) {
+                    doc.text("X", 100, 213);
+                }
+                if (formData.pravyRamVymena) {
+                    doc.text("X", 120, 213);
+                }
+                if (formData.strechaLak) {
+                    doc.text("X", 100, 219);
+                }
+                if (formData.strechaVymena) {
+                    doc.text("X", 120, 219);
+                }
 
                 const pdfBlob = doc.output("blob");
                 const textContent = Object.keys(formData)
@@ -244,7 +413,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field3_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZePreduZleva${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -255,7 +424,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field4_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZleva${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -266,7 +435,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field5_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZezaduZleva${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -277,7 +446,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field6_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZezadu${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -288,7 +457,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field7_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZezaduZprava${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -299,7 +468,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field8_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZprava${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -310,7 +479,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field9_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZepreduZprava${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -321,7 +490,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field10_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`STK${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -332,7 +501,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field11_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`VIN${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -343,7 +512,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field12_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`tachometr${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -354,7 +523,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field13_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`interier${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -365,7 +534,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field14_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`kapota${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -376,7 +545,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field15_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`levyPredniBlatnik${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -387,7 +556,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field16_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`levePredniDvere${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -398,7 +567,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field17_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`leveZadniDvere${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -409,7 +578,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field18_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`leveZadniBlatniky${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -420,7 +589,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field19_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`zadniKapota${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -431,7 +600,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field20_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`levyRam${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -442,7 +611,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field21_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`strecha${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -453,7 +622,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field22_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pravyRam${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -464,7 +633,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field23_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pravyZadniBlatnik${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -475,7 +644,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field24_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`praveZadniDvere${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -486,7 +655,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field25_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pravePredniDvere${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -497,7 +666,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field26_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pravyPredniBlatnik${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -508,7 +677,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field27_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`dodatecneFoto1${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -519,7 +688,7 @@ export default function FormPage() {
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field28_image${i + 1}.jpg`, optimizedImage);
+                                zip.file(`dodatecneFoto2${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -634,13 +803,14 @@ export default function FormPage() {
                             />
                         </label>
 
-                        <label className="form-field__input flex flex-row flex-wrap">SPZ vozidla
+                        <label className="form-field__input flex flex-row flex-wrap">SPZ vozidla <span className="required">*</span>
                             <input
                                 type="text"
                                 name="vehicleSPZ"
                                 placeholder="XXX XX-XX"
                                 value={formData.vehicleSPZ || ""}
                                 onChange={handleChange}
+                                required
                             />
                         </label>
 
@@ -666,13 +836,16 @@ export default function FormPage() {
                         </label>
 
                         <label className="form-field__input flex flex-row flex-wrap">Stav tachometru
-                            <input
-                                type="text"
-                                name="vehicleDistance"
-                                placeholder="X XXX km"
-                                value={formData.vehicleDistance || ""}
-                                onChange={handleChange}
-                            />
+                            <div className="input-group reverse">
+                                <input
+                                    type="number"
+                                    name="vehicleDistance"
+                                    placeholder="X XXX km"
+                                    value={formData.vehicleDistance || ""}
+                                    onChange={handleChange}
+                                />
+                                <span className="input-group-text">km</span>
+                            </div>
                         </label>
 
                         <label className="form-field__input flex flex-row flex-wrap">Pojišťovna <span className="required">*</span>
@@ -792,7 +965,7 @@ export default function FormPage() {
                         <label className="form-field__input flex flex-col">
                             <textarea
                                 name="detailNotes"
-                                placeholder="Případné poznámky k fotografiím detailů"
+                                placeholder="Případné poznámky ke stavu vozidla"
                                 value={formData.detailNotes || ""}
                                 onChange={handleChange}
                             />
@@ -1075,10 +1248,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="kapotaCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.kapotaCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1100,7 +1273,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
-                            
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="kapotaLak"
+                                        checked={formData.kapotaLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="kapotaVymena"
+                                        checked={formData.kapotaVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1124,10 +1318,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="levyPredniBlatnikCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.levyPredniBlatnikCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1149,6 +1343,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levyPredniBlatnikLak"
+                                        checked={formData.levyPredniBlatnikLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levyPredniBlatnikVymena"
+                                        checked={formData.levyPredniBlatnikVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1172,10 +1388,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="levePredniDvereCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.levePredniDvereCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1197,6 +1413,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levePredniDvereLak"
+                                        checked={formData.levePredniDvereLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levePredniDvereVymena"
+                                        checked={formData.levePredniDvereVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1220,10 +1458,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="leveZadniDvereCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.leveZadniDvereCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1245,6 +1483,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="leveZadniDvereLak"
+                                        checked={formData.leveZadniDvereLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="leveZadniDvereVymena"
+                                        checked={formData.leveZadniDvereVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1268,10 +1528,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="leveZadniBlatnikyCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.leveZadniBlatnikyCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1293,6 +1553,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="leveZadniBlatnikyLak"
+                                        checked={formData.leveZadniBlatnikyLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="leveZadniBlatnikyVymena"
+                                        checked={formData.leveZadniBlatnikyVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1316,10 +1598,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="zadniKapotaCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.zadniKapotaCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1341,6 +1623,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="zadniKapotaLak"
+                                        checked={formData.zadniKapotaLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="zadniKapotaVymena"
+                                        checked={formData.zadniKapotaVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1364,10 +1668,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="levyRamCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.levyRamCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1389,6 +1693,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levyRamLak"
+                                        checked={formData.levyRamLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="levyRamVymena"
+                                        checked={formData.levyRamVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1412,10 +1738,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="strechaCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.strechaCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1437,6 +1763,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="strechaLak"
+                                        checked={formData.strechaLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="strechaVymena"
+                                        checked={formData.strechaVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1460,10 +1808,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="pravyRamCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.pravyRamCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1485,6 +1833,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyRamLak"
+                                        checked={formData.pravyRamLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyRamVymena"
+                                        checked={formData.pravyRamVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1508,10 +1878,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="pravyZadniBlatnikCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.pravyZadniBlatnikCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1533,6 +1903,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyZadniBlatnikLak"
+                                        checked={formData.pravyZadniBlatnikLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyZadniBlatnikVymena"
+                                        checked={formData.pravyZadniBlatnikVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1556,10 +1948,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="praveZadniDvereCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.praveZadniDvereCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1581,6 +1973,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="praveZadniDvereLak"
+                                        checked={formData.praveZadniDvereLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="praveZadniDvereVymena"
+                                        checked={formData.praveZadniDvereVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1604,10 +2018,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="pravePredniDvereCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.pravePredniDvereCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1629,6 +2043,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravePredniDvereLak"
+                                        checked={formData.pravePredniDvereLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravePredniDvereVymena"
+                                        checked={formData.pravePredniDvereVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1652,10 +2088,10 @@ export default function FormPage() {
                                 <input
                                     type="number"
                                     name="pravyPredniBlatnikCount"
-                                    placeholder="1"
+                                    placeholder="0"
                                     value={formData.pravyPredniBlatnikCount || ""}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0}
                                 />
                             </label>
                             <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
@@ -1677,6 +2113,28 @@ export default function FormPage() {
                                     <option value="90-100">90-100 mm</option>
                                 </select>
                             </label>
+                            <div className="flex flex-row justify-between w-full">
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Lak</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyPredniBlatnikLak"
+                                        checked={formData.pravyPredniBlatnikLak || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                                <label className="switch">
+                                    <span className="font-bold text-xl">Výměna dílu</span>
+                                    <input
+                                        type="checkbox"
+                                        name="pravyPredniBlatnikVymena"
+                                        checked={formData.pravyPredniBlatnikVymena || false}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className="form-field">
@@ -1720,5 +2178,6 @@ export default function FormPage() {
                 <button className="btn btn-primary" type='submit' >{step < 3 ? 'Další' : 'Odeslat'}</button>
             </div>
         </form>
+
     );
 }
