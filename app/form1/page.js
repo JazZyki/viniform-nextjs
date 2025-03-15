@@ -110,6 +110,7 @@ export default function FormPage() {
         pravyPredniBlatnikLak: false,
     }
     const [formData, setFormData] = useState(initialFormData);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
 
@@ -229,6 +230,7 @@ export default function FormPage() {
         if (step < 3) {
             nextStep();
         } else {
+            setLoading(true);
             // Create PDF
             const doc = new jsPDF();
             doc.setFont("courier", "bold");
@@ -263,7 +265,7 @@ export default function FormPage() {
                     detailNotes: { x: 14, y: 231 },
                     kapotaCount: { x: 50, y: 141 },
                     kapotaDiameter: { x: 75, y: 141 },
-                    levyPredniBlatnikCount: { x: 50, y: 147 },
+                    levyPredniBlatnikCount: {x: 50, y: 147},
                     levyPredniBlatnikDiameter: { x: 75, y: 147 },
                     levePredniDvereCount: { x: 50, y: 153 },
                     levePredniDvereDiameter: { x: 75, y: 153 },
@@ -711,7 +713,7 @@ export default function FormPage() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="stepper">
+           <div className="stepper">
                 <div className={`step ${step === 1 ? 'active' : ''}`}>
                     <div className="step-icon">
                         <p>1</p>
@@ -759,7 +761,7 @@ export default function FormPage() {
                                 name="vehicleBrand"
                                 value={formData.vehicleBrand || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             >
                                 <option value="" disabled>
                                     Vyberte značku
@@ -799,7 +801,7 @@ export default function FormPage() {
                                 placeholder="Octavia, Fabia, Kamiq, ..."
                                 value={formData.vehicleType || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             />
                         </label>
 
@@ -810,7 +812,7 @@ export default function FormPage() {
                                 placeholder="XXX XX-XX"
                                 value={formData.vehicleSPZ || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             />
                         </label>
 
@@ -821,7 +823,7 @@ export default function FormPage() {
                                 placeholder="17 znaků"
                                 value={formData.vehicleVIN || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             />
                         </label>
 
@@ -836,15 +838,15 @@ export default function FormPage() {
                         </label>
 
                         <label className="form-field__input flex flex-row flex-wrap">Stav tachometru
-                            <div className="input-group reverse">
-                                <input
-                                    type="number"
-                                    name="vehicleDistance"
-                                    placeholder="X XXX km"
-                                    value={formData.vehicleDistance || ""}
-                                    onChange={handleChange}
-                                />
-                                <span className="input-group-text">km</span>
+                        <div className="input-group reverse">
+                            <input
+                                type="number"
+                                name="vehicleDistance"
+                                placeholder="X XXX km"
+                                value={formData.vehicleDistance || ""}
+                                onChange={handleChange}
+                            />
+                            <span className="input-group-text">km</span>
                             </div>
                         </label>
 
@@ -853,7 +855,7 @@ export default function FormPage() {
                                 name="insuranceCompany"
                                 value={formData.insuranceCompany || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             >
                                 <option value="" disabled>
                                     Vyberte Pojišťovnu
@@ -880,7 +882,7 @@ export default function FormPage() {
                                 placeholder="XXXX"
                                 value={formData.insuranceNumber || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             />
                         </label>
                     </div>
@@ -893,7 +895,7 @@ export default function FormPage() {
                                 placeholder="Josef Vomáčka"
                                 value={formData.customerName || ""}
                                 onChange={handleChange}
-                                required
+                            required
                             />
                         </label>
 
