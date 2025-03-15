@@ -28,34 +28,34 @@ export default function FormPage() {
         contractPaint: '',
         detailNotes: '',
         globalPhotographyNotess: '',
-        field1Images: Array(3).fill(""),
-        field2Images: Array(3).fill(""),
-        field3Images: Array(3).fill(""),
-        field4Images: Array(3).fill(""),
-        field5Images: Array(3).fill(""),
-        field6Images: Array(3).fill(""),
-        field7Images: Array(3).fill(""),
-        field8Images: Array(3).fill(""),
-        field9Images: Array(3).fill(""),
-        field10Images: Array(3).fill(""),
-        field11Images: Array(3).fill(""),
-        field12Images: Array(3).fill(""),
-        field13Images: Array(3).fill(""),
-        field14Images: Array(3).fill(""),
-        field15Images: Array(3).fill(""),
-        field16Images: Array(3).fill(""),
-        field17Images: Array(3).fill(""),
-        field18Images: Array(3).fill(""),
-        field19Images: Array(3).fill(""),
-        field20Images: Array(3).fill(""),
-        field21Images: Array(3).fill(""),
-        field22Images: Array(3).fill(""),
-        field23Images: Array(3).fill(""),
-        field24Images: Array(3).fill(""),
-        field25Images: Array(3).fill(""),
-        field26Images: Array(3).fill(""),
-        field27Images: Array(3).fill(""),
-        field28Images: Array(3).fill(""),
+        zapisOPoskozeni: Array(3).fill(""),
+        pohledZePredu: Array(3).fill(""),
+        pohledZePreduZleva: Array(3).fill(""),
+        pohledZleva: Array(3).fill(""),
+        pohledZezaduZleva: Array(3).fill(""),
+        pohledZezadu: Array(3).fill(""),
+        pohledZezaduZprava: Array(3).fill(""),
+        pohledZprava: Array(3).fill(""),
+        pohledZepreduZprava: Array(3).fill(""),
+        STK: Array(3).fill(""),
+        VIN: Array(3).fill(""),
+        tachometr: Array(3).fill(""),
+        interier: Array(3).fill(""),
+        kapota: Array(3).fill(""),
+        levyPredniBlatnik: Array(3).fill(""),
+        levePredniDvere: Array(3).fill(""),
+        leveZadniDvere: Array(3).fill(""),
+        leveZadniBlatniky: Array(3).fill(""),
+        zadniKapota: Array(3).fill(""),
+        levyRam: Array(3).fill(""),
+        strecha: Array(3).fill(""),
+        pravyRam: Array(3).fill(""),
+        pravyZadniBlatnik: Array(3).fill(""),
+        praveZadniDvere: Array(3).fill(""),
+        pravePredniDvere: Array(3).fill(""),
+        pravyPredniBlatnik: Array(3).fill(""),
+        dodatecneFoto1: Array(3).fill(""),
+        dodatecneFoto2: Array(3).fill(""),
     });
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
@@ -141,30 +141,22 @@ export default function FormPage() {
         });
     };
     const uploadToDrive = async (zipBlob) => {
-        const folderID = '1NDhnG2QhgFEb0eUUJFwsaanWFhz3FOVQ'
-        const metadata = {
-            name: `${filename}.zip`,
-            mimeType: 'application/zip',
-            parents: [folderID], // Specify the folder ID here
-        };
         const formData = new FormData();
-        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
         formData.append("file", zipBlob, `${filename}.zip`);
-    
+
         const response = await fetch("/api/upload", {
             method: "POST",
-            //headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }), // Ensure you have the correct access token
             body: formData,
         });
-    
+
         const data = await response.json();
         if (data.success) {
-            console.log("File uploaded successfully:", data.fileId);
             alert("Soubor byl úspěšně nahrán na Google Disk!");
         } else {
             console.error("Upload failed:", data.error);
         }
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -225,23 +217,309 @@ export default function FormPage() {
                 zip.file(`${filename}.txt`, textBlob);
 
                 const addImagesToZip = async () => {
-                    for (let i = 0; i < formData.field1Images.length; i++) {
-                        const image = formData.field1Images[i];
+                    for (let i = 0; i < formData.zapisOPoskozeni.length; i++) {
+                        const image = formData.zapisOPoskozeni[i];
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field1_image_${i + 1}.jpg`, optimizedImage);
+                                zip.file(`zapisOPoskozeni_${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
                         }
                     }
-                    for (let i = 0; i < formData.field2Images.length; i++) {
-                        const image = formData.field2Images[i];
+                    for (let i = 0; i < formData.pohledZePredu.length; i++) {
+                        const image = formData.pohledZePredu[i];
                         if (image) {
                             try {
                                 const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
-                                zip.file(`field2_image_${i + 1}.jpg`, optimizedImage);
+                                zip.file(`pohledZePredu_${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZePreduZleva.length; i++) {
+                        const image = formData.pohledZePreduZleva[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field3_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZleva.length; i++) {
+                        const image = formData.pohledZleva[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field4_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZezaduZleva.length; i++) {
+                        const image = formData.pohledZezaduZleva[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field5_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZezadu.length; i++) {
+                        const image = formData.pohledZezadu[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field6_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZezaduZprava.length; i++) {
+                        const image = formData.pohledZezaduZprava[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field7_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZprava.length; i++) {
+                        const image = formData.pohledZprava[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field8_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pohledZepreduZprava.length; i++) {
+                        const image = formData.pohledZepreduZprava[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field9_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.STK.length; i++) {
+                        const image = formData.STK[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field10_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.VIN.length; i++) {
+                        const image = formData.VIN[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field11_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.tachometr.length; i++) {
+                        const image = formData.tachometr[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field12_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.interier.length; i++) {
+                        const image = formData.interier[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field13_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.kapota.length; i++) {
+                        const image = formData.kapota[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field14_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.levyPredniBlatnik.length; i++) {
+                        const image = formData.levyPredniBlatnik[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field15_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.levePredniDvere.length; i++) {
+                        const image = formData.levePredniDvere[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field16_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.leveZadniDvere.length; i++) {
+                        const image = formData.leveZadniDvere[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field17_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.leveZadniBlatniky.length; i++) {
+                        const image = formData.leveZadniBlatniky[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field18_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.zadniKapota.length; i++) {
+                        const image = formData.zadniKapota[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field19_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.levyRam.length; i++) {
+                        const image = formData.levyRam[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field20_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.strecha.length; i++) {
+                        const image = formData.strecha[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field21_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pravyRam.length; i++) {
+                        const image = formData.pravyRam[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field22_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pravyZadniBlatnik.length; i++) {
+                        const image = formData.pravyZadniBlatnik[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field23_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.praveZadniDvere.length; i++) {
+                        const image = formData.praveZadniDvere[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field24_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pravePredniDvere.length; i++) {
+                        const image = formData.pravePredniDvere[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field25_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.pravyPredniBlatnik.length; i++) {
+                        const image = formData.pravyPredniBlatnik[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field26_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.dodatecneFoto1.length; i++) {
+                        const image = formData.dodatecneFoto1[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field27_image${i + 1}.jpg`, optimizedImage);
+                            } catch (error) {
+                                console.error('Error optimizing image:', error);
+                            }
+                        }
+                    }
+                    for (let i = 0; i < formData.dodatecneFoto2.length; i++) {
+                        const image = formData.dodatecneFoto2[i];
+                        if (image) {
+                            try {
+                                const optimizedImage = await resizeAndCompressImage(image, 1920, 1920, 1000);
+                                zip.file(`field28_image${i + 1}.jpg`, optimizedImage);
                             } catch (error) {
                                 console.error('Error optimizing image:', error);
                             }
@@ -255,14 +533,13 @@ export default function FormPage() {
                         await uploadToDrive(zipBlob);
                     });
 
-                    console.log("Form Data Submitted:", formData);
-                    alert("Form submitted!");
+                    alert("Formulář byl vyplněn a je připraven ke stažení!");
                 });
             };
         }
     };
 
-    
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="stepper">
@@ -357,14 +634,13 @@ export default function FormPage() {
                             />
                         </label>
 
-                        <label className="form-field__input flex flex-row flex-wrap">SPZ vozidla<span className="required">*</span>
+                        <label className="form-field__input flex flex-row flex-wrap">SPZ vozidla
                             <input
                                 type="text"
                                 name="vehicleSPZ"
                                 placeholder="XXX XX-XX"
                                 value={formData.vehicleSPZ || ""}
                                 onChange={handleChange}
-                                required
                             />
                         </label>
 
@@ -389,14 +665,13 @@ export default function FormPage() {
                             />
                         </label>
 
-                        <label className="form-field__input flex flex-row flex-wrap">Stav tachometru <span className="required">*</span>
+                        <label className="form-field__input flex flex-row flex-wrap">Stav tachometru
                             <input
                                 type="text"
                                 name="vehicleDistance"
                                 placeholder="X XXX km"
                                 value={formData.vehicleDistance || ""}
                                 onChange={handleChange}
-                                required
                             />
                         </label>
 
@@ -449,18 +724,17 @@ export default function FormPage() {
                             />
                         </label>
 
-                        <label className="form-field__input flex flex-row flex-wrap">Adresa <span className="required">*</span>
+                        <label className="form-field__input flex flex-row flex-wrap">Adresa
                             <input
                                 type="text"
                                 name="customerAddress"
                                 placeholder="Pod skalou 123, 123 45 Praha"
                                 value={formData.customerAddress || ""}
                                 onChange={handleChange}
-                                required
                             />
                         </label>
 
-                        <label className="form-field__input flex flex-row flex-wrap">Telefonní číslo <span className="required">*</span>
+                        <label className="form-field__input flex flex-row flex-wrap">Telefonní číslo
                             <div className="input-group">
                                 <span className="input-group-text">+420</span>
                                 <input
@@ -469,7 +743,6 @@ export default function FormPage() {
                                     placeholder="777 777 777"
                                     value={formData.customerPhone || ""}
                                     onChange={handleChange}
-                                    required
                                 />
                             </div>
                         </label>
@@ -539,7 +812,7 @@ export default function FormPage() {
                     />
                     <div className="form-field">
                         <p className="form-field__label">0 - Zápis o poškození</p>
-                        {formData.field1Images.map((image, index) => (
+                        {formData.zapisOPoskozeni.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -547,8 +820,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field1Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field1Images[index - 1]}
+                                        onChange={(e) => handleImageChange('zapisOPoskozeni', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.zapisOPoskozeni[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -556,7 +829,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">1 - Pohled zepředu</p>
-                        {formData.field2Images.map((image, index) => (
+                        {formData.pohledZePredu.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -564,8 +837,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field2Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field2Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZePredu', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZePredu[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -573,7 +846,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">2 - Pohled zepředu zleva</p>
-                        {formData.field3Images.map((image, index) => (
+                        {formData.pohledZePreduZleva.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -581,8 +854,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field3Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field3Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZePreduZleva', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZePreduZleva[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -590,7 +863,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">3 - Pohled zleva</p>
-                        {formData.field4Images.map((image, index) => (
+                        {formData.pohledZleva.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -598,8 +871,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field4Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field4Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZleva', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZleva[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -607,7 +880,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">4 - Pohled zezadu zleva</p>
-                        {formData.field5Images.map((image, index) => (
+                        {formData.pohledZezaduZleva.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -615,8 +888,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field5Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field5Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZezaduZleva', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZezaduZleva[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -624,7 +897,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">5 - Pohled zezadu</p>
-                        {formData.field6Images.map((image, index) => (
+                        {formData.pohledZezadu.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -632,8 +905,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field6Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field6Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZezadu', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZezadu[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -641,7 +914,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">6 - Pohled zezadu zprava</p>
-                        {formData.field7Images.map((image, index) => (
+                        {formData.pohledZezaduZprava.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -649,8 +922,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field7Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field7Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZezaduZprava', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZezaduZprava[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -658,7 +931,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">7 - Pohled zprava</p>
-                        {formData.field8Images.map((image, index) => (
+                        {formData.pohledZprava.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -666,8 +939,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field8Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field8Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZprava', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZprava[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -675,7 +948,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">8 - Pohled zepředu zprava</p>
-                        {formData.field9Images.map((image, index) => (
+                        {formData.pohledZepreduZprava.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -683,8 +956,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field9Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field9Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pohledZepreduZprava', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pohledZepreduZprava[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -692,7 +965,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">9 - STK</p>
-                        {formData.field10Images.map((image, index) => (
+                        {formData.STK.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -700,8 +973,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field10Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field10Images[index - 1]}
+                                        onChange={(e) => handleImageChange('STK', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.STK[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -709,7 +982,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">10 - VIN</p>
-                        {formData.field11Images.map((image, index) => (
+                        {formData.VIN.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -717,8 +990,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field11Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field11Images[index - 1]}
+                                        onChange={(e) => handleImageChange('VIN', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.VIN[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -726,7 +999,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">11 - Stav tachometru</p>
-                        {formData.field12Images.map((image, index) => (
+                        {formData.tachometr.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -734,8 +1007,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field12Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field12Images[index - 1]}
+                                        onChange={(e) => handleImageChange('tachometr', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.tachometr[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -743,7 +1016,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">12 - Interiér</p>
-                        {formData.field13Images.map((image, index) => (
+                        {formData.interier.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -751,8 +1024,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field13Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field13Images[index - 1]}
+                                        onChange={(e) => handleImageChange('interier', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.interier[index - 1]}
                                     />
                                 </label>
                             </div>
@@ -783,7 +1056,7 @@ export default function FormPage() {
                     />
                     <div className="form-field">
                         <p className="form-field__label">1 - Kapota</p>
-                        {formData.field14Images.map((image, index) => (
+                        {formData.kapota.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -791,16 +1064,48 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field14Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field14Images[index - 1]}
+                                        onChange={(e) => handleImageChange('kapota', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.kapota[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="kapotaCount"
+                                    placeholder="1"
+                                    value={formData.kapotaCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="kapotaDiameter"
+                                    value={formData.kapotaDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                            
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">2 - Levý přední blatník</p>
-                        {formData.field15Images.map((image, index) => (
+                        {formData.levyPredniBlatnik.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -808,16 +1113,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field15Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field15Images[index - 1]}
+                                        onChange={(e) => handleImageChange('levyPredniBlatnik', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.levyPredniBlatnik[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="levyPredniBlatnikCount"
+                                    placeholder="1"
+                                    value={formData.levyPredniBlatnikCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="levyPredniBlatnikDiameter"
+                                    value={formData.levyPredniBlatnikDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">3 - Levé přední dveře</p>
-                        {formData.field16Images.map((image, index) => (
+                        {formData.levePredniDvere.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -825,16 +1161,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field16Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field16Images[index - 1]}
+                                        onChange={(e) => handleImageChange('levePredniDvere', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.levePredniDvere[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="levePredniDvereCount"
+                                    placeholder="1"
+                                    value={formData.levePredniDvereCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="levePredniDvereDiameter"
+                                    value={formData.levePredniDvereDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">4 - Levé zadní dvěře</p>
-                        {formData.field17Images.map((image, index) => (
+                        {formData.leveZadniDvere.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -842,16 +1209,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field17Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field17Images[index - 1]}
+                                        onChange={(e) => handleImageChange('leveZadniDvere', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.leveZadniDvere[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="leveZadniDvereCount"
+                                    placeholder="1"
+                                    value={formData.leveZadniDvereCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="leveZadniDvereDiameter"
+                                    value={formData.leveZadniDvereDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">5 - Levý zadní blatník</p>
-                        {formData.field18Images.map((image, index) => (
+                        {formData.leveZadniBlatniky.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -859,16 +1257,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field18Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field18Images[index - 1]}
+                                        onChange={(e) => handleImageChange('leveZadniBlatniky', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.leveZadniBlatniky[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="leveZadniBlatnikyCount"
+                                    placeholder="1"
+                                    value={formData.leveZadniBlatnikyCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="leveZadniBlatnikyDiameter"
+                                    value={formData.leveZadniBlatnikyDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">6 - zadní kapota</p>
-                        {formData.field19Images.map((image, index) => (
+                        {formData.zadniKapota.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -876,16 +1305,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field19Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field19Images[index - 1]}
+                                        onChange={(e) => handleImageChange('zadniKapota', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.zadniKapota[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="zadniKapotaCount"
+                                    placeholder="1"
+                                    value={formData.zadniKapotaCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="kapotaDiameter"
+                                    value={formData.zadniKapotaDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">7 - levý rám</p>
-                        {formData.field20Images.map((image, index) => (
+                        {formData.levyRam.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -893,16 +1353,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field20Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field20Images[index - 1]}
+                                        onChange={(e) => handleImageChange('levyRam', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.levyRam[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="levyRamCount"
+                                    placeholder="1"
+                                    value={formData.levyRamCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="levyRamDiameter"
+                                    value={formData.levyRamDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">8 - střecha</p>
-                        {formData.field21Images.map((image, index) => (
+                        {formData.strecha.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -910,16 +1401,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field21Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field21Images[index - 1]}
+                                        onChange={(e) => handleImageChange('strecha', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.strecha[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="strechaCount"
+                                    placeholder="1"
+                                    value={formData.strechaCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="strechaDiameter"
+                                    value={formData.strechaDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">9 - pravý rám</p>
-                        {formData.field22Images.map((image, index) => (
+                        {formData.pravyRam.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -927,16 +1449,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field22Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field22Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pravyRam', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pravyRam[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="pravyRamCount"
+                                    placeholder="1"
+                                    value={formData.pravyRamCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="pravyRamDiameter"
+                                    value={formData.pravyRamDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">10 - pravý zadní blatník</p>
-                        {formData.field23Images.map((image, index) => (
+                        {formData.pravyZadniBlatnik.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -944,16 +1497,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field23Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field23Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pravyZadniBlatnik', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pravyZadniBlatnik[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="pravyZadniBlatnikCount"
+                                    placeholder="1"
+                                    value={formData.pravyZadniBlatnikCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="pravyZadniBlatnikDiameter"
+                                    value={formData.pravyZadniBlatnikDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">11 - Pravé zadní dvěře</p>
-                        {formData.field24Images.map((image, index) => (
+                        {formData.praveZadniDvere.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -961,16 +1545,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field24Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field24Images[index - 1]}
+                                        onChange={(e) => handleImageChange('praveZadniDvere', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.praveZadniDvere[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="praveZadniDvereCount"
+                                    placeholder="1"
+                                    value={formData.praveZadniDvereCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="praveZadniDvereDiameter"
+                                    value={formData.praveZadniDvereDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">12 - Pravé přední dvěře</p>
-                        {formData.field25Images.map((image, index) => (
+                        {formData.pravePredniDvere.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -978,16 +1593,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field25Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field25Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pravePredniDvere', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pravePredniDvere[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="pravePredniDvereCount"
+                                    placeholder="1"
+                                    value={formData.pravePredniDvereCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="pravePredniDvereDiameter"
+                                    value={formData.pravePredniDvereDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">13 - Pravý přední blatník</p>
-                        {formData.field26Images.map((image, index) => (
+                        {formData.pravyPredniBlatnik.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -995,16 +1641,47 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field26Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field26Images[index - 1]}
+                                        onChange={(e) => handleImageChange('pravyPredniBlatnik', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.pravyPredniBlatnik[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
+                        <div className="flex flex-row flex-wrap w-full items-start detail-info">
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2 mt-0 pr-4">Počet poškození
+                                <input
+                                    type="number"
+                                    name="pravyPredniBlatnikCount"
+                                    placeholder="1"
+                                    value={formData.pravyPredniBlatnikCount || ""}
+                                    onChange={handleChange}
+                                    min={1}
+                                />
+                            </label>
+                            <label className="form-field__input flex flex-row flex-wrap w-1/2">Průměr
+                                <select
+                                    name="pravyPredniBlatnikDiameter"
+                                    value={formData.pravyPredniBlatnikDiameter || ""}
+                                    onChange={handleChange}
+                                >
+                                    <option value="" disabled>
+                                        Vyberte průměr
+                                    </option>
+                                    <option value="20-30">20-30 mm</option>
+                                    <option value="30-40">30-40 mm</option>
+                                    <option value="40-50">40-50 mm</option>
+                                    <option value="50-60">50-60 mm</option>
+                                    <option value="60-70">60-70 mm</option>
+                                    <option value="70-80">70-80 mm</option>
+                                    <option value="80-90">80-90 mm</option>
+                                    <option value="90-100">90-100 mm</option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">14 - Dodatečné foto 1</p>
-                        {formData.field27Images.map((image, index) => (
+                        {formData.dodatecneFoto1.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -1012,16 +1689,16 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field27Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field27Images[index - 1]}
+                                        onChange={(e) => handleImageChange('dodatecneFoto1', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.dodatecneFoto1[index - 1]}
                                     />
                                 </label>
                             </div>
                         ))}
                     </div>
                     <div className="form-field">
-                        <p className="form-field__label">15 - Dodatečné foto 3</p>
-                        {formData.field28Images.map((image, index) => (
+                        <p className="form-field__label">15 - Dodatečné foto 2</p>
+                        {formData.dodatecneFoto2.map((image, index) => (
                             <div key={index} className="form-field__input flex flex-row flex-wrap pb-4">
                                 <label>
                                     Foto č. {index + 1} &nbsp;
@@ -1029,8 +1706,8 @@ export default function FormPage() {
                                         type="file"
                                         accept="image/*"
                                         capture="camera"
-                                        onChange={(e) => handleImageChange('field28Images', index, e.target.files[0])}
-                                        disabled={index > 0 && !formData.field28Images[index - 1]}
+                                        onChange={(e) => handleImageChange('dodatecneFoto2', index, e.target.files[0])}
+                                        disabled={index > 0 && !formData.dodatecneFoto2[index - 1]}
                                     />
                                 </label>
                             </div>

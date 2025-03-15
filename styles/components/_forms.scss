@@ -106,6 +106,13 @@ input[type="file"] {
             background: b.$basic-green2;
         }
     }
+    .detail-info {
+        .form-field__input {
+            &:first-of-type {
+                margin-top: 0;
+            }
+        }       
+    }
 
     label {
         margin-bottom: 1rem;
