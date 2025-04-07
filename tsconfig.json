@@ -29,7 +29,7 @@
     "**/*.ts",
     "**/*.tsx",
     "pages/api/**/*.ts"
-  ],
+, "components/SignaturePad.js", "components/Modal.js"  ],
   "exclude": [
     "node_modules"
   ]

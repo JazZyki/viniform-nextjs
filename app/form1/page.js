@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import SignatureCanvas from "react-signature-canvas";
+import Modal from "../../components/Modal";
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -15,6 +17,7 @@ export default function FormPage() {
         vehicleSPZ: '',
         vehicleVIN: '',
         vehicleColor: '',
+        vehicleYear: '',
         vehicleDistance: '',
         insuranceCompany: '',
         insuranceNumber: '',
@@ -224,6 +227,7 @@ export default function FormPage() {
         }
     };
 
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -246,134 +250,144 @@ export default function FormPage() {
 
                 // Define positions for each text field
                 const positions = {
-                    technician: { x: 147, y: 215 },
+                    technician: { x: 133, y: 246  },
                     vehicleBrand: { x: 14, y: 65 },
                     vehicleType: { x: 65, y: 65 },
                     vehicleSPZ: { x: 122, y: 65 },
-                    vehicleVIN: { x: 34, y: 117 },
-                    vehicleColor: { x: 166, y: 108 },
-                    vehicleDistance: { x: 107, y: 108 },
-                    insuranceCompany: { x: 14, y: 80 },
-                    insuranceNumber: { x: 56, y: 80 },
-                    customerName: { x: 14, y: 51 },
+                    vehicleVIN: { x: 14 , y: 80 },
+                    vehicleColor: { x: 165, y: 80 },
+                    vehicleDistance: { x: 107, y: 80 },
+                    vehicleYear: { x: 136, y: 80 },
+                    insuranceCompany: { x: 14, y: 93 },
+                    insuranceNumber: { x: 88, y: 93 },
+                    customerName: { x: 14, y: 52 },
                     //customerAddress: { x: 10, y: 120 },
-                    customerPhone: { x: 122, y: 51 },
-                    serviceDate: { x: 14, y: 93 },
+                    customerPhone: { x: 122, y: 52 },
+                    serviceDate: { x: 154, y: 93 },
                     //hailsDiameter: { x: 10, y: 150 },
                     //contractMD: { x: 10, y: 160 },
                     //contractPaint: { x: 10, y: 170 },
-                    detailNotes: { x: 14, y: 231 },
-                    kapotaCount: { x: 50, y: 141 },
-                    kapotaDiameter: { x: 75, y: 141 },
-                    levyPredniBlatnikCount: {x: 50, y: 147},
-                    levyPredniBlatnikDiameter: { x: 75, y: 147 },
-                    levePredniDvereCount: { x: 50, y: 153 },
-                    levePredniDvereDiameter: { x: 75, y: 153 },
-                    leveZadniDvereCount: { x: 50, y: 159 },
-                    leveZadniDvereDiameter: { x: 75, y: 159 },
-                    leveZadniBlatnikyCount: { x: 50, y: 165 },
-                    leveZadniBlatnikyDiameter: { x: 75, y: 165 },
-                    levyRamCount: { x: 50, y: 171 },
-                    levyRamDiameter: { x: 75, y: 171 },
-                    zadniKapotaCount: { x: 50, y: 177 },
-                    zadniKapotaDiameter: { x: 75, y: 177 },
-                    pravyPredniBlatnikCount: { x: 50, y: 189 },
-                    pravyPredniBlatnikDiameter: { x: 75, y: 189 },
-                    pravePredniDvereCount: { x: 50, y: 195 },
-                    pravePredniDvereDiameter: { x: 75, y: 195 },
-                    praveZadniDvereCount: { x: 50, y: 201 },
-                    praveZadniDvereDiameter: { x: 75, y: 201 },
-                    pravyZadniBlatnikCount: { x: 50, y: 207 },
-                    pravyZadniBlatnikDiameter: { x: 75, y: 207 },
-                    pravyRamCount: { x: 50, y: 213 },
-                    pravyRamDiameter: { x: 75, y: 213 },
-                    strechaCount: { x: 50, y: 219 },
-                    strechaDiameter: { x: 75, y: 219 },
+                    detailNotes: { x: 134, y: 182 },
+                    kapotaCount: { x: 50, y: 139 },
+                    kapotaDiameter: { x: 75, y: 139 },
+                    strechaCount: { x: 50, y: 145 },
+                    strechaDiameter: { x: 75, y: 145 },
+                    levyPredniBlatnikCount: {x: 50, y: 152},
+                    levyPredniBlatnikDiameter: { x: 75, y: 152 },
+                    pravyPredniBlatnikCount: { x: 50, y: 159 },
+                    pravyPredniBlatnikDiameter: { x: 75, y: 159 },
+                    levePredniDvereCount: { x: 50, y: 165 },
+                    levePredniDvereDiameter: { x: 75, y: 165 },
+                    pravePredniDvereCount: { x: 50, y: 172 },
+                    pravePredniDvereDiameter: { x: 75, y: 172 },
+                    leveZadniDvereCount: { x: 50, y: 179 },
+                    leveZadniDvereDiameter: { x: 75, y: 179 },
+                    praveZadniDvereCount: { x: 50, y: 186 },
+                    praveZadniDvereDiameter: { x: 75, y: 186 },
+                    leveZadniBlatnikyCount: { x: 50, y: 192 },
+                    leveZadniBlatnikyDiameter: { x: 75, y: 192 },
+                    pravyZadniBlatnikCount: { x: 50, y: 199 },
+                    pravyZadniBlatnikDiameter: { x: 75, y: 199 },
+                    levyRamCount: { x: 50, y: 206 },
+                    levyRamDiameter: { x: 75, y: 206 },
+                    pravyRamCount: { x: 50, y: 211 },
+                    pravyRamDiameter: { x: 75, y: 211 },
+                    zadniKapotaCount: { x: 50, y: 219 },
+                    zadniKapotaDiameter: { x: 75, y: 219 },
                 };
 
                 // Add text fields to the PDF
                 Object.keys(positions).forEach((key) => {
-                    doc.text(`${formData[key]}`, positions[key].x, positions[key].y);
+                    if (key === 'detailNotes') {
+                        const textLines = doc.splitTextToSize(formData[key], 62);
+                        let curentY = positions[key].y;
+                        textLines.forEach((line) => {
+                            doc.text(line, positions[key].x, curentY);
+                            curentY += 6; // Adjust line height
+                        })
+                    } else {
+                        doc.text(`${formData[key]}`, positions[key].x, positions[key].y);
+                    }
                 });
 
                 // Add checkboxes to the PDF
                 if (formData.kapotaLak) {
-                    doc.text("X", 100, 141);
+                    doc.text("X", 100, 139);
                 }
                 if (formData.kapotaVymena) {
-                    doc.text("X", 120, 141);
+                    doc.text("X", 118, 139);
                 }
                 if (formData.levyPredniBlatnikLak) {
-                    doc.text("X", 100, 147);
+                    doc.text("X", 100, 152);
                 }
                 if (formData.levyPredniBlatnikVymena) {
-                    doc.text("X", 120, 147);
+                    doc.text("X", 118, 152);
                 }
                 if (formData.levePredniDvereLak) {
-                    doc.text("X", 100, 153);
-                }
-                if (formData.levePredniDvereVymena) {
-                    doc.text("X", 120, 153);
-                }
-                if (formData.leveZadniDvereLak) {
-                    doc.text("X", 100, 159);
-                }
-                if (formData.leveZadniDvereVymena) {
-                    doc.text("X", 120, 159);
-                }
-                if (formData.leveZadniBlatnikyLak) {
                     doc.text("X", 100, 165);
                 }
+                if (formData.levePredniDvereVymena) {
+                    doc.text("X", 118, 165);
+                }
+                if (formData.leveZadniDvereLak) {
+                    doc.text("X", 100, 179);
+                }
+                if (formData.leveZadniDvereVymena) {
+                    doc.text("X", 118, 179);
+                }
+                if (formData.leveZadniBlatnikyLak) {
+                    doc.text("X", 100, 192);
+                }
                 if (formData.leveZadniBlatnikyVymena) {
-                    doc.text("X", 120, 165);
+                    doc.text("X", 118, 192);
                 }
                 if (formData.levyRamLak) {
-                    doc.text("X", 100, 171);
+                    doc.text("X", 100, 206);
                 }
                 if (formData.levyRamVymena) {
-                    doc.text("X", 120, 171);
+                    doc.text("X", 118, 206);
                 }
                 if (formData.zadniKapotaLak) {
-                    doc.text("X", 100, 177);
-                }
-                if (formData.zadniKapotaVymena) {
-                    doc.text("X", 120, 177);
-                }
-                if (formData.pravyPredniBlatnikLak) {
-                    doc.text("X", 100, 189);
-                }
-                if (formData.pravyPredniBlatnikVymena) {
-                    doc.text("X", 120, 189);
-                }
-                if (formData.pravePredniDvereLak) {
-                    doc.text("X", 100, 195);
-                }
-                if (formData.pravePredniDvereVymena) {
-                    doc.text("X", 120, 195);
-                }
-                if (formData.praveZadniDvereLak) {
-                    doc.text("X", 100, 201);
-                }
-                if (formData.praveZadniDvereVymena) {
-                    doc.text("X", 120, 201);
-                }
-                if (formData.pravyZadniBlatnikLak) {
-                    doc.text("X", 100, 207);
-                }
-                if (formData.pravyZadniBlatnikVymena) {
-                    doc.text("X", 120, 207);
-                }
-                if (formData.pravyRamLak) {
-                    doc.text("X", 100, 213);
-                }
-                if (formData.pravyRamVymena) {
-                    doc.text("X", 120, 213);
-                }
-                if (formData.strechaLak) {
                     doc.text("X", 100, 219);
                 }
-                if (formData.strechaVymena) {
+                if (formData.zadniKapotaVymena) {
                     doc.text("X", 120, 219);
+                }
+                if (formData.pravyPredniBlatnikLak) {
+                    doc.text("X", 100, 159);
+                }
+                if (formData.pravyPredniBlatnikVymena) {
+                    doc.text("X", 118, 159);
+                }
+                if (formData.pravePredniDvereLak) {
+                    doc.text("X", 100, 172);
+                }
+                if (formData.pravePredniDvereVymena) {
+                    doc.text("X", 118, 172);
+                }
+                if (formData.praveZadniDvereLak) {
+                    doc.text("X", 100, 186);
+                }
+                if (formData.praveZadniDvereVymena) {
+                    doc.text("X", 118, 186);
+                }
+                if (formData.pravyZadniBlatnikLak) {
+                    doc.text("X", 100, 199);
+                }
+                if (formData.pravyZadniBlatnikVymena) {
+                    doc.text("X", 120, 199);
+                }
+                if (formData.pravyRamLak) {
+                    doc.text("X", 100, 211);
+                }
+                if (formData.pravyRamVymena) {
+                    doc.text("X", 118, 211);
+                }
+                if (formData.strechaLak) {
+                    doc.text("X", 100, 145);
+                }
+                if (formData.strechaVymena) {
+                    doc.text("X", 118, 145);
                 }
 
                 const pdfBlob = doc.output("blob");
@@ -833,6 +847,16 @@ export default function FormPage() {
                                 name="vehicleColor"
                                 placeholder="Černá, bílá, modrá, ..."
                                 value={formData.vehicleColor || ""}
+                                onChange={handleChange}
+                            />
+                        </label>
+
+                        <label className="form-field__input flex flex-row flex-wrap">Rok výroby
+                            <input
+                                type="text"
+                                name="vehicleYear"
+                                placeholder="2015"
+                                value={formData.vehicleYear || ""}
                                 onChange={handleChange}
                             />
                         </label>
