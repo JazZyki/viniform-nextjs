@@ -21,6 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-signature-canvas": "^1.1.0-alpha.2",
+    "reactjs-popup": "^2.0.6",
     "sass": "^1.83.4"
   },
   "devDependencies": {

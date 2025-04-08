@@ -1,0 +1,20 @@
+@use '../basic' as b;
+
+.sign-module {
+    .modal-open {
+        margin-top: 1rem;
+        padding: 0.2rem 1rem;
+        text-transform: none;
+        font-weight: normal;
+    }
+}
+
+#popup-root {
+    .popup-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .popup-content {
+        background-color: b.$basic-white;
+    }
+}

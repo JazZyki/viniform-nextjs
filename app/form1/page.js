@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import SignatureCanvas from "react-signature-canvas";
-import Modal from "../../components/Modal";
+import SignaturePad from "react-signature-canvas";
+import Popup from "reactjs-popup";
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -116,6 +116,14 @@ export default function FormPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
+
+    const [imageURL, setImageURL] = useState(null); // create a state that will contain our image url
+    const sigCanvas = useRef({});
+    const clear = () => sigCanvas.current.clear(); // function to clear the canvas
+    const save = () => {
+        setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
+        sigCanvas.current.clear();
+    }; // function to save the image
 
     useEffect(() => {
         // Check login and fetch technician name
@@ -227,7 +235,7 @@ export default function FormPage() {
         }
     };
 
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -250,11 +258,11 @@ export default function FormPage() {
 
                 // Define positions for each text field
                 const positions = {
-                    technician: { x: 133, y: 246  },
+                    technician: { x: 133, y: 246 },
                     vehicleBrand: { x: 14, y: 65 },
                     vehicleType: { x: 65, y: 65 },
                     vehicleSPZ: { x: 122, y: 65 },
-                    vehicleVIN: { x: 14 , y: 80 },
+                    vehicleVIN: { x: 14, y: 80 },
                     vehicleColor: { x: 165, y: 80 },
                     vehicleDistance: { x: 107, y: 80 },
                     vehicleYear: { x: 136, y: 80 },
@@ -267,12 +275,12 @@ export default function FormPage() {
                     //hailsDiameter: { x: 10, y: 150 },
                     //contractMD: { x: 10, y: 160 },
                     //contractPaint: { x: 10, y: 170 },
-                    detailNotes: { x: 134, y: 182 },
+                    detailNotes: { x: 134, y: 184 },
                     kapotaCount: { x: 50, y: 139 },
                     kapotaDiameter: { x: 75, y: 139 },
                     strechaCount: { x: 50, y: 145 },
                     strechaDiameter: { x: 75, y: 145 },
-                    levyPredniBlatnikCount: {x: 50, y: 152},
+                    levyPredniBlatnikCount: { x: 50, y: 152 },
                     levyPredniBlatnikDiameter: { x: 75, y: 152 },
                     pravyPredniBlatnikCount: { x: 50, y: 159 },
                     pravyPredniBlatnikDiameter: { x: 75, y: 159 },
@@ -310,6 +318,9 @@ export default function FormPage() {
                     }
                 });
 
+                if (imageURL) {
+                    doc.addImage(imageURL, 'PNG', 50, 270, 50, 20); // Adjust (x, y, width, height) as needed
+                }
                 // Add checkboxes to the PDF
                 if (formData.kapotaLak) {
                     doc.text("X", 100, 139);
@@ -727,7 +738,7 @@ export default function FormPage() {
 
     return (
         <form onSubmit={handleSubmit}>
-           <div className="stepper">
+            <div className="stepper">
                 <div className={`step ${step === 1 ? 'active' : ''}`}>
                     <div className="step-icon">
                         <p>1</p>
@@ -775,7 +786,7 @@ export default function FormPage() {
                                 name="vehicleBrand"
                                 value={formData.vehicleBrand || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             >
                                 <option value="" disabled>
                                     Vyberte značku
@@ -815,7 +826,7 @@ export default function FormPage() {
                                 placeholder="Octavia, Fabia, Kamiq, ..."
                                 value={formData.vehicleType || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             />
                         </label>
 
@@ -826,7 +837,7 @@ export default function FormPage() {
                                 placeholder="XXX XX-XX"
                                 value={formData.vehicleSPZ || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             />
                         </label>
 
@@ -837,7 +848,7 @@ export default function FormPage() {
                                 placeholder="17 znaků"
                                 value={formData.vehicleVIN || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             />
                         </label>
 
@@ -862,15 +873,15 @@ export default function FormPage() {
                         </label>
 
                         <label className="form-field__input flex flex-row flex-wrap">Stav tachometru
-                        <div className="input-group reverse">
-                            <input
-                                type="number"
-                                name="vehicleDistance"
-                                placeholder="X XXX km"
-                                value={formData.vehicleDistance || ""}
-                                onChange={handleChange}
-                            />
-                            <span className="input-group-text">km</span>
+                            <div className="input-group reverse">
+                                <input
+                                    type="number"
+                                    name="vehicleDistance"
+                                    placeholder="X XXX km"
+                                    value={formData.vehicleDistance || ""}
+                                    onChange={handleChange}
+                                />
+                                <span className="input-group-text">km</span>
                             </div>
                         </label>
 
@@ -879,7 +890,7 @@ export default function FormPage() {
                                 name="insuranceCompany"
                                 value={formData.insuranceCompany || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             >
                                 <option value="" disabled>
                                     Vyberte Pojišťovnu
@@ -906,7 +917,7 @@ export default function FormPage() {
                                 placeholder="XXXX"
                                 value={formData.insuranceNumber || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             />
                         </label>
                     </div>
@@ -919,7 +930,7 @@ export default function FormPage() {
                                 placeholder="Josef Vomáčka"
                                 value={formData.customerName || ""}
                                 onChange={handleChange}
-                            required
+                                required
                             />
                         </label>
 
@@ -2196,6 +2207,53 @@ export default function FormPage() {
                                 </label>
                             </div>
                         ))}
+                    </div>
+                    <div className="form-field sign-module">
+                    <p className="form-field__label">Podpis zákazníka</p>
+                        <Popup
+                            modal
+                            trigger={<button type="button" className="btn btn-primary modal-open">Otevřít podpisový modul</button>}
+                            closeOnDocumentClick={false}
+                        >
+                            {close => (
+                                <>
+                                    <SignaturePad
+                                        ref={sigCanvas}
+                                        canvasProps={{
+                                            className: "signatureCanvas"
+                                        }}
+                                    />
+                                    {/* Button to trigger save canvas image */}
+                                    <button 
+                                        className="btn btn-primary" 
+                                        onClick={()=> {
+                                            save();
+                                            close();
+                                        }}
+                                        >
+                                        Vložit
+                                    </button>
+                                    <button className="btn btn-terciary" onClick={clear}>Vyčistit</button>
+                                    <button className="btn btn-secondary" onClick={close}>Zavřít</button>
+                                </>
+                            )}
+                        </Popup>
+                        <br />
+                        <br />
+                        {/* if our we have a non-null image url we should 
+      show an image and pass our imageURL state to it*/}
+                        {imageURL ? (
+                            <img
+                                src={imageURL}
+                                alt="my signature"
+                                style={{
+                                    display: "block",
+                                    margin: "0 auto",
+                                    border: "1px solid black",
+                                    width: "150px"
+                                }}
+                            />
+                        ) : null}
                     </div>
                 </>
             )}
