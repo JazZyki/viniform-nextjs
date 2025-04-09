@@ -2224,6 +2224,7 @@ export default function FormPage() {
                                         }}
                                     />
                                     {/* Button to trigger save canvas image */}
+                                    <div className="buttons-wrapper bg-white">
                                     <button 
                                         className="btn btn-primary" 
                                         onClick={()=> {
@@ -2235,22 +2236,20 @@ export default function FormPage() {
                                     </button>
                                     <button className="btn btn-terciary" onClick={clear}>Vyčistit</button>
                                     <button className="btn btn-secondary" onClick={close}>Zavřít</button>
+                                    </div>
                                 </>
                             )}
                         </Popup>
-                        <br />
-                        <br />
-                        {/* if our we have a non-null image url we should 
-      show an image and pass our imageURL state to it*/}
                         {imageURL ? (
                             <img
                                 src={imageURL}
                                 alt="my signature"
                                 style={{
                                     display: "block",
-                                    margin: "0 auto",
+                                    margin: "1rem auto 0",
                                     border: "1px solid black",
-                                    width: "150px"
+                                    width: "150px",
+                                    height: "100px",
                                 }}
                             />
                         ) : null}

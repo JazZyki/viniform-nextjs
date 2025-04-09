@@ -16,5 +16,12 @@
 
     .popup-content {
         background-color: b.$basic-white;
+        max-width: 390px;
+        max-height: 200px;
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
     }
 }
