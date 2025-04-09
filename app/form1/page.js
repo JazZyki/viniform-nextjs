@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import SignaturePad from "react-signature-canvas";
+//import SignaturePad from "react-signature-canvas";
 import Popup from "reactjs-popup";
+import SignatureCanvas from "react-signature-canvas"; // Correct import
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -111,19 +112,27 @@ export default function FormPage() {
         dodatecneFoto1: Array(3).fill(""),
         dodatecneFoto2: Array(3).fill(""),
         pravyPredniBlatnikLak: false,
+        customerSignature: null,
     }
     const [formData, setFormData] = useState(initialFormData);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
 
-    const [imageURL, setImageURL] = useState(null); // create a state that will contain our image url
-    const sigCanvas = useRef({});
-    const clear = () => sigCanvas.current.clear(); // function to clear the canvas
-    const save = () => {
-        setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
-        sigCanvas.current.clear();
-    }; // function to save the image
+    const [imageURL, setImageURL] = useState(null);
+    const sigCanvas = useRef(null);
+
+    const clearSignature = () => {
+        if (sigCanvas.current) {
+            sigCanvas.current.clear();
+        }
+    };
+
+    const saveSignature = () => {
+        if (sigCanvas.current) {
+            setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL());
+        }
+    };
 
     useEffect(() => {
         // Check login and fetch technician name
@@ -734,7 +743,6 @@ export default function FormPage() {
             };
         }
     };
-
 
     return (
         <form onSubmit={handleSubmit}>
@@ -2209,35 +2217,41 @@ export default function FormPage() {
                         ))}
                     </div>
                     <div className="form-field sign-module">
-                    <p className="form-field__label">Podpis zákazníka</p>
+                        <p className="form-field__label">Podpis zákazníka</p>
                         <Popup
                             modal
                             trigger={<button type="button" className="btn btn-primary modal-open">Otevřít podpisový modul</button>}
                             closeOnDocumentClick={false}
                         >
                             {close => (
-                                <>
-                                    <SignaturePad
+                                <div className="modal">
+                                    <a className="close" onClick={close}>
+                                        &times;
+                                    </a>
+                                    <SignatureCanvas
                                         ref={sigCanvas}
+                                        penColor="black"
                                         canvasProps={{
-                                            className: "signatureCanvas"
+                                            width: 500, // Adjust as needed
+                                            height: 200, // Adjust as needed
+                                            className: "signatureCanvas",
+                                            style: { border: '1px solid black' },
                                         }}
                                     />
-                                    {/* Button to trigger save canvas image */}
                                     <div className="buttons-wrapper bg-white">
-                                    <button 
-                                        className="btn btn-primary" 
-                                        onClick={()=> {
-                                            save();
-                                            close();
-                                        }}
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={() => {
+                                                saveSignature();
+                                                close();
+                                            }}
                                         >
-                                        Vložit
-                                    </button>
-                                    <button className="btn btn-terciary" onClick={clear}>Vyčistit</button>
-                                    <button className="btn btn-secondary" onClick={close}>Zavřít</button>
+                                            Vložit
+                                        </button>
+                                        <button className="btn btn-terciary" onClick={clearSignature}>Vyčistit</button>
+                                        <button className="btn btn-secondary" onClick={close}>Zavřít</button>
                                     </div>
-                                </>
+                                </div>
                             )}
                         </Popup>
                         {imageURL ? (
