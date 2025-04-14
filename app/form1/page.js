@@ -1,13 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-//import SignaturePad from "react-signature-canvas";
-import Popup from "reactjs-popup";
-import SignatureCanvas from "react-signature-canvas"; // Correct import
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -31,6 +28,7 @@ export default function FormPage() {
         contractPaint: '',
         detailNotes: '',
         globalPhotographyNotess: '',
+        globalPhotographyNotess2: '',
         zapisOPoskozeni: Array(3).fill(""),
         pohledZePredu: Array(3).fill(""),
         pohledZePreduZleva: Array(3).fill(""),
@@ -44,95 +42,80 @@ export default function FormPage() {
         VIN: Array(3).fill(""),
         tachometr: Array(3).fill(""),
         interier: Array(3).fill(""),
-        kapota: Array(3).fill(""),
+        kapota: Array(10).fill(""),
         kapotaCount: 0,
         kapotaDiameter: 0,
         kapotaLak: false,
         kapotaVymena: false,
-        levyPredniBlatnik: Array(3).fill(""),
+        levyPredniBlatnik: Array(10).fill(""),
         levyPredniBlatnikCount: 0,
         levyPredniBlatnikDiameter: 0,
         levyPredniBlatnikLak: false,
         levyPredniBlatnikVymena: false,
-        levePredniDvere: Array(3).fill(""),
+        levePredniDvere: Array(10).fill(""),
         levePredniDvereCount: 0,
         levePredniDvereDiameter: 0,
         levePredniDvereLak: false,
         levePredniDvereVymena: false,
-        leveZadniDvere: Array(3).fill(""),
+        leveZadniDvere: Array(10).fill(""),
         leveZadniDvereCount: 0,
         leveZadniDvereDiameter: 0,
         leveZadniDvereLak: false,
         leveZadniDvereVymena: false,
-        leveZadniBlatniky: Array(3).fill(""),
+        leveZadniBlatniky: Array(10).fill(""),
         leveZadniBlatnikyCount: 0,
         leveZadniBlatnikyDiameter: 0,
         leveZadniBlatnikyLak: false,
         leveZadniBlatnikyVymena: false,
-        zadniKapota: Array(3).fill(""),
+        zadniKapota: Array(10).fill(""),
         zadniKapotaCount: 0,
         zadniKapotaDiameter: 0,
         zadniKapotaLak: false,
         zadniKapotaVymena: false,
-        levyRam: Array(3).fill(""),
+        levyRam: Array(10).fill(""),
         levyRamCount: 0,
         levyRamDiameter: 0,
         levyRamLak: false,
         levyRamVymena: false,
-        strecha: Array(3).fill(""),
+        strecha: Array(10).fill(""),
         strechaCount: 0,
         strechaDiameter: 0,
         strechaLak: false,
         strechaVymena: false,
-        pravyRam: Array(3).fill(""),
+        pravyRam: Array(10).fill(""),
         pravyRamCount: 0,
         pravyRamDiameter: 0,
         pravyRamLak: false,
         pravyRamVymena: false,
-        pravyZadniBlatnik: Array(3).fill(""),
+        pravyZadniBlatnik: Array(10).fill(""),
         pravyZadniBlatnikCount: 0,
         pravyZadniBlatnikDiameter: 0,
         pravyZadniBlatnikLak: false,
         pravyZadniBlatnikVymena: false,
-        praveZadniDvere: Array(3).fill(""),
+        praveZadniDvere: Array(10).fill(""),
         praveZadniDvereCount: 0,
         praveZadniDvereDiameter: 0,
         praveZadniDvereLak: false,
         praveZadniDvereVymena: false,
-        pravePredniDvere: Array(3).fill(""),
+        pravePredniDvere: Array(10).fill(""),
         pravePredniDvereCount: 0,
         pravePredniDvereDiameter: 0,
         pravePredniDvereLak: false,
         pravePredniDvereVymena: false,
-        pravyPredniBlatnik: Array(3).fill(""),
+        pravyPredniBlatnik: Array(10).fill(""),
         pravyPredniBlatnikCount: 0,
         pravyPredniBlatnikDiameter: 0,
         pravyPredniBlatnikLak: false,
         pravyPredniBlatnikVymena: false,
-        dodatecneFoto1: Array(3).fill(""),
-        dodatecneFoto2: Array(3).fill(""),
+        dodatecneFoto1: Array(10).fill(""),
+        dodatecneFoto2: Array(10).fill(""),
         pravyPredniBlatnikLak: false,
-        customerSignature: null,
+        //customerSignature: null,
     }
     const [formData, setFormData] = useState(initialFormData);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
-
-    const [imageURL, setImageURL] = useState(null);
-    const sigCanvas = useRef(null);
-
-    const clearSignature = () => {
-        if (sigCanvas.current) {
-            sigCanvas.current.clear();
-        }
-    };
-
-    const saveSignature = () => {
-        if (sigCanvas.current) {
-            setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL());
-        }
-    };
 
     useEffect(() => {
         // Check login and fetch technician name
@@ -278,12 +261,8 @@ export default function FormPage() {
                     insuranceCompany: { x: 14, y: 93 },
                     insuranceNumber: { x: 88, y: 93 },
                     customerName: { x: 14, y: 52 },
-                    //customerAddress: { x: 10, y: 120 },
                     customerPhone: { x: 122, y: 52 },
                     serviceDate: { x: 154, y: 93 },
-                    //hailsDiameter: { x: 10, y: 150 },
-                    //contractMD: { x: 10, y: 160 },
-                    //contractPaint: { x: 10, y: 170 },
                     detailNotes: { x: 134, y: 184 },
                     kapotaCount: { x: 50, y: 139 },
                     kapotaDiameter: { x: 75, y: 139 },
@@ -327,9 +306,6 @@ export default function FormPage() {
                     }
                 });
 
-                if (imageURL) {
-                    doc.addImage(imageURL, 'PNG', 50, 270, 50, 20); // Adjust (x, y, width, height) as needed
-                }
                 // Add checkboxes to the PDF
                 if (formData.kapotaLak) {
                     doc.text("X", 100, 139);
@@ -1251,6 +1227,7 @@ export default function FormPage() {
                     </div>
                     <div className="form-field">
                         <p className="form-field__label">Poznámky k fotografiím globálního stavu</p>
+                        <p className="mt-2">Poznámky se nepropíšou do zakázkového listu, pouze do exportovaného TXT souboru.</p>
                         <label className="form-field__input flex flex-col">
                             <textarea
                                 name="globalPhotographyNotess"
@@ -1308,14 +1285,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1378,14 +1356,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1448,14 +1427,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1518,14 +1498,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1588,14 +1569,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1658,14 +1640,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1728,14 +1711,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1798,14 +1782,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1868,14 +1853,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -1938,14 +1924,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -2008,14 +1995,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -2078,14 +2066,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -2148,14 +2137,15 @@ export default function FormPage() {
                                     <option value="" disabled>
                                         Vyberte průměr
                                     </option>
-                                    <option value="20-30">20-30 mm</option>
-                                    <option value="30-40">30-40 mm</option>
-                                    <option value="40-50">40-50 mm</option>
-                                    <option value="50-60">50-60 mm</option>
-                                    <option value="60-70">60-70 mm</option>
-                                    <option value="70-80">70-80 mm</option>
-                                    <option value="80-90">80-90 mm</option>
-                                    <option value="90-100">90-100 mm</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                    <option value="50">50 mm</option>
+                                    <option value="60">60 mm</option>
+                                    <option value="70">70 mm</option>
+                                    <option value="80">80 mm</option>
+                                    <option value="90">90 mm</option>
+                                    <option value="100">100 mm</option>
                                 </select>
                             </label>
                             <div className="flex flex-row justify-between w-full">
@@ -2216,57 +2206,17 @@ export default function FormPage() {
                             </div>
                         ))}
                     </div>
-                    <div className="form-field sign-module">
-                        <p className="form-field__label">Podpis zákazníka</p>
-                        <Popup
-                            modal
-                            trigger={<button type="button" className="btn btn-primary modal-open">Otevřít podpisový modul</button>}
-                            closeOnDocumentClick={false}
-                        >
-                            {close => (
-                                <div className="modal">
-                                    <a className="close" onClick={close}>
-                                        &times;
-                                    </a>
-                                    <SignatureCanvas
-                                        ref={sigCanvas}
-                                        penColor="black"
-                                        canvasProps={{
-                                            width: 500, // Adjust as needed
-                                            height: 200, // Adjust as needed
-                                            className: "signatureCanvas",
-                                            style: { border: '1px solid black' },
-                                        }}
-                                    />
-                                    <div className="buttons-wrapper bg-white">
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={() => {
-                                                saveSignature();
-                                                close();
-                                            }}
-                                        >
-                                            Vložit
-                                        </button>
-                                        <button className="btn btn-terciary" onClick={clearSignature}>Vyčistit</button>
-                                        <button className="btn btn-secondary" onClick={close}>Zavřít</button>
-                                    </div>
-                                </div>
-                            )}
-                        </Popup>
-                        {imageURL ? (
-                            <img
-                                src={imageURL}
-                                alt="my signature"
-                                style={{
-                                    display: "block",
-                                    margin: "1rem auto 0",
-                                    border: "1px solid black",
-                                    width: "150px",
-                                    height: "100px",
-                                }}
+                    <div className="form-field">
+                        <p className="form-field__label">Poznámky k fotografiím jednotlivých částí</p>
+                        <p className="mt-2">Poznámky se nepropíšou do zakázkového listu, pouze do exportovaného TXT souboru.</p>
+                        <label className="form-field__input flex flex-col">
+                            <textarea
+                                name="globalPhotographyNotess2"
+                                placeholder="Případné poznámky..."
+                                value={formData.globalPhotographyNotess2 || ""}
+                                onChange={handleChange}
                             />
-                        ) : null}
+                        </label>
                     </div>
                 </>
             )}
@@ -2275,6 +2225,5 @@ export default function FormPage() {
                 <button className="btn btn-primary" type='submit' >{step < 3 ? 'Další' : 'Odeslat'}</button>
             </div>
         </form>
-
     );
 }
