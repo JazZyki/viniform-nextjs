@@ -6,7 +6,7 @@ import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Popup from "reactjs-popup";
-import SignaturePadOnly from "../../components/Signature";
+import SignatureCanvas from 'react-signature-canvas';
 
 
 export default function FormPage() {
@@ -119,6 +119,22 @@ export default function FormPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
+
+    const signatureRef = useRef(null);
+
+    const logSignature = () => {
+        if (signatureRef.current) {
+            const dataUrl = signatureRef.current.toDataURL();
+            console.log("Base64 Data URL:", dataUrl);
+            alert(dataUrl); // You can remove this if you want
+        }
+    };
+
+    const clearSignature = () => {
+        if (signatureRef.current) {
+            signatureRef.current.clear();
+        }
+    };
 
     useEffect(() => {
         // Check login and fetch technician name
@@ -2221,8 +2237,44 @@ export default function FormPage() {
                             />
                         </label>
                     </div>
-                    <div>
-                    <SignaturePadOnly />
+                    <div className="form-field">
+                        <p className="form-field__label">Podpis zákazníka</p>
+                        <Popup
+                            modal
+                            trigger={<button type="button" className="btn btn-primary modal-open mt-4">Otevřít podpisový modul</button>}
+                            closeOnDocumentClick={false}
+                        >
+                            {close => (
+                                <div className="modal">
+                                    <a className="p-4 bg-[#168E33] text-white rounded-3xl w-[50px] h-[50px] close block text-2xl" onClick={close}>
+                                        &times;
+                                    </a>
+                                    <SignatureCanvas
+                                        ref={signatureRef}
+                                        penColor='black'
+                                        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                                    />
+                                    <div className="flex flex-row justify-between w-full bg-white">
+                                    <button type="button" className="btn " onClick={logSignature}>Log Signature</button>
+                                    <button type="button" onClick={clearSignature}>Clear Signature</button>
+                                    </div>
+                                </div>
+                            )}
+                        </Popup>
+                        {/*{imageURL ? (
+                            <img
+                                src={imageURL}
+                                alt="my signature"
+                                style={{
+                                    display: "block",
+                                    margin: "1rem auto 0",
+                                    border: "1px solid black",
+                                    width: "150px",
+                                    height: "100px",
+                                }}
+                            />
+                        ) : null}*/}
+
 
                     </div>
                 </>
