@@ -6,7 +6,8 @@ import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Popup from "reactjs-popup";
-import SignaturePad from "react-signature-canvas";
+import SignaturePadOnly from "../../components/Signature";
+
 
 export default function FormPage() {
     const [step, setStep] = useState(1);
@@ -118,12 +119,6 @@ export default function FormPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
-    const [imageURL, setImageURL] = useState(null);
-    const sigCanvas = useRef({});
-    const clear = () => sigCanvas.current.clear();
-    const save = () => {
-        setImageURL(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
-    }
 
     useEffect(() => {
         // Check login and fetch technician name
@@ -2227,42 +2222,8 @@ export default function FormPage() {
                         </label>
                     </div>
                     <div>
-                        <Popup
-                            modal
-                            trigger={<button>Open Signature Pad</button>}
-                            closeOnDocumentClick={false}
-                        >
-                            {close => (
-                                <>
-                                    <SignaturePad
-                                        ref={sigCanvas}
-                                        canvasProps={{
-                                            className: "signatureCanvas"
-                                        }}
-                                    />
-                                    {/* Button to trigger save canvas image */}
-                                    <button onClick={save}>Save</button>
-                                    <button onClick={clear}>Clear</button>
-                                    <button onClick={close}>Close</button>
-                                </>
-                            )}
-                        </Popup>
-                        <br />
-                        <br />
-                        {/* if our we have a non-null image url we should 
-      show an image and pass our imageURL state to it*/}
-                        {imageURL ? (
-                            <img
-                                src={imageURL}
-                                alt="my signature"
-                                style={{
-                                    display: "block",
-                                    margin: "0 auto",
-                                    border: "1px solid black",
-                                    width: "150px"
-                                }}
-                            />
-                        ) : null}
+                    <SignaturePadOnly />
+
                     </div>
                 </>
             )}

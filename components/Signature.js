@@ -1,62 +1,36 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef } from 'react';
+import SignatureCanvas from 'react-signature-canvas';
 
-const SignaturePad = ({ width = 500, height = 200, correctionX = 0, correctionY = 0 }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isDrawing, setIsDrawing] = useState(false);
+const SignaturePadOnly = () => {
+  const signatureRef = useRef(null);
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+  const logSignature = () => {
+    if (signatureRef.current) {
+      const dataUrl = signatureRef.current.toDataURL();
+      console.log("Base64 Data URL:", dataUrl);
+      alert(dataUrl); // You can remove this if you want
+    }
+  };
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+  const clearSignature = () => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  };
 
-        const handleMouseDown = (e) => {
-            setIsDrawing(true);
-            ctx.beginPath();
-            ctx.moveTo(
-                e.pageX - canvas.offsetLeft + correctionX,
-                e.pageY - canvas.offsetTop + correctionY
-            );
-        };
-
-        const handleMouseUp = () => {
-            setIsDrawing(false);
-            ctx.beginPath();
-        };
-
-        const handleMouseMove = (e) => {
-            if (!isDrawing) return;
-            ctx.lineTo(
-                e.pageX - canvas.offsetLeft + correctionX,
-                e.pageY - canvas.offsetTop + correctionY
-            );
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = '#000';
-            ctx.stroke();
-        };
-
-        canvas.addEventListener('mousedown', handleMouseDown);
-        canvas.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-
-        return () => {
-            canvas.removeEventListener('mousedown', handleMouseDown);
-            canvas.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [isDrawing, correctionX, correctionY]);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            width={width}
-            height={height}
-            className="border border-black rounded"
-        />
-    );
+  return (
+    <div>
+      <SignatureCanvas
+        ref={signatureRef}
+        penColor='black'
+        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+      />
+      <button onClick={logSignature}>Log Signature</button>
+      <button onClick={clearSignature}>Clear Signature</button>
+    </div>
+  );
 };
 
-export default SignaturePad;
+export default SignaturePadOnly;
