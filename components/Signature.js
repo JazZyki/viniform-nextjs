@@ -25,7 +25,7 @@ const SignaturePadOnly = () => {
       <SignatureCanvas
         ref={signatureRef}
         penColor='black'
-        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+        canvasProps={{  className: 'sigCanvas' }}
       />
       <button onClick={logSignature}>Log Signature</button>
       <button onClick={clearSignature}>Clear Signature</button>

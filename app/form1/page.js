@@ -121,12 +121,25 @@ export default function FormPage() {
     const filename = `${formData.vehicleSPZ}_${formData.customerName}`;
 
     const signatureRef = useRef(null);
+    const [signatureImage, setSignatureImage] = useState(null);
 
-    const logSignature = () => {
+    const logSignature = (close) => {
         if (signatureRef.current) {
-            const dataUrl = signatureRef.current.toDataURL();
-            console.log("Base64 Data URL:", dataUrl);
-            alert(dataUrl); // You can remove this if you want
+            const canvas = signatureRef.current.getCanvas();
+            const context = canvas.getContext("2d");
+
+            const originalImage = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            context.globalCompositeOperation = "destination-over";
+            context.fillStyle = "white";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL("image/png");
+            setSignatureImage(dataUrl); // Save the signature image to state
+            context.putImageData(originalImage, 0, 0);
+            close();
+        } else {
+            console.error("Signature ref is not set");
         }
     };
 
@@ -324,6 +337,10 @@ export default function FormPage() {
                         doc.text(`${formData[key]}`, positions[key].x, positions[key].y);
                     }
                 });
+
+                if(signatureImage) {
+                    doc.addImage(signatureImage, 'PNG', 35, 266, 50, 20);
+                }
 
                 // Add checkboxes to the PDF
                 if (formData.kapotaLak) {
@@ -2252,15 +2269,24 @@ export default function FormPage() {
                                     <SignatureCanvas
                                         ref={signatureRef}
                                         penColor='black'
-                                        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                                        canvasProps={{
+                                            width: 500,
+                                            height: 200,
+                                            className: 'sigCanvas'
+                                        }}
                                     />
-                                    <div className="flex flex-row justify-between w-full bg-white">
-                                    <button type="button" className="btn " onClick={logSignature}>Log Signature</button>
-                                    <button type="button" onClick={clearSignature}>Clear Signature</button>
+                                    <div className="flex flex-row justify-between pt-4 w-full bg-white rounded-3xl">
+                                        <button type="button" className="btn bg-[#168E33] text-white" onClick={() => logSignature(close)}>Vložit podpis</button>
+                                        <button type="button" className="btn bg-gray-300" onClick={clearSignature}>Vymazat</button>
                                     </div>
                                 </div>
                             )}
                         </Popup>
+                        {signatureImage && (
+                            <div className="signature-preview">
+                                <img src={signatureImage} alt="Signature" />
+                            </div>
+                        )}
                         {/*{imageURL ? (
                             <img
                                 src={imageURL}
