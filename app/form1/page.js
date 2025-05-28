@@ -747,10 +747,10 @@ export default function FormPage() {
                 addImagesToZip().then(() => {
                     zip.generateAsync({ type: "blob" }).then(async (zipBlob) => {
                         saveAs(zipBlob, `${filename}.zip`);
-                        await uploadToDrive(zipBlob);
+                        //await uploadToDrive(zipBlob);
                     });
 
-                    alert("Formulář byl vyplněn a je připraven ke stažení!");
+                    alert("Formulář byl vyplněn a je připraven ke stažení! Potvrzením fomrlář stáhnete k sobe do mobilního telefonu. Nezapoměňte jej předat dále.");
                 });
             };
         }
