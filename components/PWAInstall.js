@@ -1,4 +1,4 @@
-import React from 'react';
+'use client';
 import { useState, useEffect } from 'react';
 
 // Hook for handling PWA installation prompt
