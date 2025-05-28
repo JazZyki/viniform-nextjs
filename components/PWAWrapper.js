@@ -1,5 +1,5 @@
 "use client";
-import usePWAInstall from "./PWAInstall";
+import usePWAInstall from "../hooks/PWAInstall";
 
 export default function PWAWrapper({ children }) {
     const { installable, installPWA } = usePWAInstall();

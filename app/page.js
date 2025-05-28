@@ -1,3 +1,4 @@
+'use client';
 export default function HomePage() {
   return (
     <div className="max-w-md m-auto">

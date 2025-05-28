@@ -1,5 +1,4 @@
 import "../styles/global.scss";
-import PWAWrapper from "../components/PWAWrapper";
 
 const APP_NAME = "Viniform";
 const APP_DEFAULT_TITLE = "ViniForm - Zakázkový list";
@@ -48,7 +47,6 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
-  const { installable, installPWA } = usePWAInstall();
   return (
     <html lang="cs">
       <body>
@@ -58,9 +56,8 @@ export default function RootLayout({ children }) {
             <h1 className="text-4xl pb-2 border-b-4 border-maingreen">Zakázkový list</h1>
           </div>
           <div className="p-4">
-            <PWAWrapper>{children}</PWAWrapper>
-          </div>
-          
+            {children}
+          </div>          
         </div>
       </body>
     </html>

@@ -1,14 +1,15 @@
-'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-// Hook for handling PWA installation prompt
-const usePWAInstall = () => {
-    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+export default function usePWAInstall() {
     const [installable, setInstallable] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
 
     useEffect(() => {
+        // Ensure this code runs only in the browser
+        if (typeof window === "undefined") return;
+
         const handleBeforeInstallPrompt = (event) => {
-            event.preventDefault();
+            event.preventDefault(); // Prevent the default browser prompt
             setDeferredPrompt(event);
             setInstallable(true);
         };
@@ -25,9 +26,9 @@ const usePWAInstall = () => {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === "accepted") {
-                    console.log("Uživatel nainstaloval PWA");
+                    console.log("User accepted the PWA installation");
                 } else {
-                    console.log("Uživatel odmítl instalaci");
+                    console.log("User dismissed the PWA installation");
                 }
                 setDeferredPrompt(null);
                 setInstallable(false);
@@ -36,6 +37,4 @@ const usePWAInstall = () => {
     };
 
     return { installable, installPWA };
-};
-
-export default usePWAInstall;
+}
