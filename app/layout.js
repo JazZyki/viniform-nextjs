@@ -1,5 +1,5 @@
 import "../styles/global.scss";
-import usePWAInstall from "../components/PWAInstall";
+import PWAWrapper from "../components/PWAWrapper";
 
 const APP_NAME = "Viniform";
 const APP_DEFAULT_TITLE = "ViniForm - Zakázkový list";
@@ -58,16 +58,9 @@ export default function RootLayout({ children }) {
             <h1 className="text-4xl pb-2 border-b-4 border-maingreen">Zakázkový list</h1>
           </div>
           <div className="p-4">
-            {children}
+            <PWAWrapper>{children}</PWAWrapper>
           </div>
-          {installable && (
-            <button
-              className="fixed bottom-4 right-4 bg-maingreen text-white p-2 rounded"
-              onClick={installPWA}
-            >
-              Instalovat aplikaci do telefonu
-            </button>
-          )}
+          
         </div>
       </body>
     </html>
