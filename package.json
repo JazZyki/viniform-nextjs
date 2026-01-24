@@ -11,6 +11,7 @@
   "dependencies": {
     "@docuseal/signature-maker-react": "^1.0.2",
     "archiver": "^7.0.1",
+    "cookies-next": "^6.1.1",
     "file-saver": "^2.0.5",
     "formidable": "^3.5.2",
     "googleapis": "^146.0.0",
@@ -18,7 +19,7 @@
     "jszip": "^3.10.1",
     "lemonadejs": "^5.0.2",
     "mime-types": "^2.1.35",
-    "next": "15.1.6",
+    "next": "15.1.11",
     "nodemailer": "^6.10.1",
     "pdfmake": "^0.2.18",
     "react": "^19.0.0",

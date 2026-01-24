@@ -1,4 +1,5 @@
 import "../styles/global.scss";
+import Header from "../components/Header";
 
 const APP_NAME = "Viniform";
 const APP_DEFAULT_TITLE = "ViniForm - Zakázkový list";
@@ -50,12 +51,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="cs">
       <body>
-        <div className="min-h-screen max-w-md m-auto bg-white">
+        <div className="min-h-screen max-w-md m-auto bg-white overflow-hidden">
           <div>
             <img src="../logo.png" alt="VinicarsLogo" width={100} className="pt-8 w-[90%] m-auto" />
             <h1 className="text-4xl pb-2 border-b-4 border-maingreen">Zakázkový list</h1>
           </div>
           <div className="p-4">
+            <Header />
             {children}
           </div>          
         </div>
