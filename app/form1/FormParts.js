@@ -1,23 +1,53 @@
-// components/FormPart.js
 "use client";
+import { calculatePartPrice } from "../../lib/priceCalculator";
 
-export default function FormPart({ id, label, formData, onImageChange, onChange, onCheckboxChange }) {
+export default function FormPart({ id, label, category, formData, onImageChange, onChange, onCheckboxChange }) {
+    // Logika pro dynamické zobrazení fotek (Max 5)
+    const images = formData[id] || [];
+    const filledImagesCount = images.filter(img => img !== "").length;
+    // Zobrazíme tolik polí, kolik je vyplněných + 1 prázdné (pokud jsme pod limitem 5)
+    const visibleInputsCount = Math.min(filledImagesCount + 1, 5);
+
+    // Opravená funkce pro výpočet ceny
+    const count = parseInt(formData[`${id}Count`]) || 0;
+    const diameter = formData[`${id}Diameter`];
+
+    // Zde počítáme cenu za konkrétní díl
+    // Přidal jsem kontrolu "isAluminium" a "isPreLeveling"
+    const currentPrice = calculatePartPrice(
+        count,
+        diameter,
+        category,
+        formData[`${id}Alu`], // Budeme potřebovat nový checkbox pro hliník
+        formData[`${id}Lak`]  // Předpokládám, že Lak = Předrovnání (-50%)? Upravte dle potřeby.
+    );
+
     return (
-        <div className="form-field border-b pb-6 mb-6">
-            <p className="form-field__label font-bold text-lg text-blue-800">{label}</p>
+        <div className="form-field border-b pb-6 mb-6 bg-gray-50">
+            <div className="flex justify-between items-center mb-4">
+                <p className="font-bold text-lg text-maingreen">{label}</p>
+                {currentPrice > 0 && (
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
+                        Odhad: {currentPrice.toLocaleString()} Kč
+                    </span>
+                )}
+            </div>
 
             {/* Nahrávání fotek - generuje se 10 vstupů pro každý díl */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                {formData[id].map((file, index) => (
-                    <div key={index} className="flex items-center gap-2 text-xs border p-1 rounded bg-gray-50">
-                        <span className="w-4">{index + 1}.</span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="camera"
-                            className="w-full"
-                            onChange={(e) => onImageChange(id, index, e.target.files[0])}
-                        />
+            <div className="grid grid-cols-1 gap-2 mb-4">
+                <p className="text-xs font-semibold text-gray-500 uppercase">Fotodokumentace poškození (max. 5 fotek):</p>
+                {[...Array(visibleInputsCount)].map((_, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                        <div className={`flex-1 border-2 border-dashed rounded-lg p-2 transition-colors ${images[index] ? 'border-green-500 bg-green-50' : 'border-gray-300'}`}>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                capture="camera"
+                                className="text-sm w-full cursor-pointer"
+                                onChange={(e) => onImageChange(id, index, e.target.files[0])}
+                            />
+                        </div>
+                        {images[index] && <span className="text-green-600 text-xl">✓</span>}
                     </div>
                 ))}
             </div>
@@ -48,17 +78,17 @@ export default function FormPart({ id, label, formData, onImageChange, onChange,
                         <option value="20">20 mm</option>
                         <option value="30">30 mm</option>
                         <option value="40">40 mm</option>
-                        <option value="50">50 mm</option>
+                        {/*<option value="50">50 mm</option>
                         <option value="60">60 mm</option>
                         <option value="70">70 mm</option>
                         <option value="80">80 mm</option>
                         <option value="90">90 mm</option>
-                        <option value="100">100 mm</option>
+                        <option value="100">100 mm</option>*/}
                     </select>
                 </label>
             </div>
 
-            <div className="flex gap-8 mt-4">
+            <div className="flex items-start gap-8 mt-4">
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
@@ -78,6 +108,16 @@ export default function FormPart({ id, label, formData, onImageChange, onChange,
                         className="w-5 h-5"
                     />
                     <span className="text-sm font-semibold">Výměna</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        name={`${id}Alu`}
+                        checked={formData[`${id}Alu`] || false}
+                        onChange={onCheckboxChange}
+                        className="w-5 h-5 text-orange-500"
+                    />
+                    <span className="text-sm font-semibold">Hliník (+20%)</span>
                 </label>
             </div>
         </div>

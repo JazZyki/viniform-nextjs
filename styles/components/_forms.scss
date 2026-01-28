@@ -10,10 +10,10 @@ input {
     &[type="date"] {
         width: 100%;
         //margin-bottom: 1rem;
-        padding: 0.5rem 1rem;
+        padding: 0.25rem 1rem;
         transition: b.$transition;
         border: 1px solid b.$basic-grey;
-        border-radius: 1rem;
+        //border-radius: 1rem;
         font-size: 1.2rem;
         transition: b.$transition;
 
@@ -36,9 +36,9 @@ textarea {
     width: 100%;
     background-color: #fff;
     border: 1px solid b.$basic-grey;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
     font-size: 1.2rem !important;
-    padding: 0.6rem 1rem !important;
+    padding: 0.3rem 1rem !important;
     transition: b.$transition;
 
     &:focus,
@@ -67,8 +67,8 @@ input[type="file"] {
     position: relative;
     margin-bottom: 2rem;
     padding: 1rem;
-    border: 1px solid b.$basic-green;
-    border-radius: 1rem 1rem 0 0;
+    border: 1px solid #106324;
+    border-radius: 1rem;
 
     .form-field__label {
         position: absolute;
