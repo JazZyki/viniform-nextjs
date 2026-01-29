@@ -40,6 +40,9 @@ textarea {
     font-size: 1.2rem !important;
     padding: 0.3rem 1rem !important;
     transition: b.$transition;
+    &.select {
+        padding: 0.1rem 1rem !important;
+    }
 
     &:focus,
     &:focus-visible,

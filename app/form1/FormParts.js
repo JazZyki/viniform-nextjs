@@ -22,6 +22,9 @@ export default function FormPart({ id, label, category, formData, onImageChange,
         formData[`${id}Lak`]  // Předpokládám, že Lak = Předrovnání (-50%)? Upravte dle potřeby.
     );
 
+    // Pokud je zadaný počet, ale není vybrán průměr
+    const showWarning = count > 0 && !diameter;
+
     return (
         <div className="form-field border-b pb-6 mb-6 bg-gray-50">
             <div className="flex justify-between items-center mb-4">
@@ -42,7 +45,7 @@ export default function FormPart({ id, label, category, formData, onImageChange,
                             <input
                                 type="file"
                                 accept="image/*"
-                                capture="camera"
+                                //capture="camera"
                                 className="text-sm w-full cursor-pointer"
                                 onChange={(e) => onImageChange(id, index, e.target.files[0])}
                             />
@@ -52,8 +55,8 @@ export default function FormPart({ id, label, category, formData, onImageChange,
                 ))}
             </div>
 
-            <div className="flex flex-row gap-4">
-                <label className="w-1/2">
+            <div className="flex flex-row flex-wrap justify-between">
+                <label className="w-5/12">
                     <span className="block text-sm">Počet důlků</span>
                     <input
                         type="number"
@@ -64,7 +67,7 @@ export default function FormPart({ id, label, category, formData, onImageChange,
                         min="0"
                     />
                 </label>
-                <label className="w-1/2">
+                <label className="w-5/12">
                     <span className="block text-sm">Průměr</span>
                     <select
                         name={`${id}Diameter`}
@@ -73,7 +76,7 @@ export default function FormPart({ id, label, category, formData, onImageChange,
                         className="w-full p-2 border rounded"
                     >
                         <option value="" disabled>
-                            Vyberte průměr
+                            Průměr
                         </option>
                         <option value="20">20 mm</option>
                         <option value="30">30 mm</option>
@@ -86,6 +89,7 @@ export default function FormPart({ id, label, category, formData, onImageChange,
                         <option value="100">100 mm</option>*/}
                     </select>
                 </label>
+                {showWarning && <p className="w-full text-red-500 text-[12px] font-bold mt-1">! Vyberte průměr pro výpočet ceny</p>}
             </div>
 
             <div className="flex items-start gap-8 mt-4">
