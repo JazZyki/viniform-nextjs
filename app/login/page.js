@@ -3,25 +3,21 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PWAWrapper from "../../components/PWAWrapper";
-import { setCookie } from "cookies-next";
 import { loginAction } from "../actions/auth";
+import { USER_ROLES } from "../config";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
 
-    const users = {
-        admin: { password: "heslo", name: "Admin" },
-        user1: { password: "veslo", name: "User 1" },
-        user2: { password: "meslo", name: "User 2" },
-    };
-
     const handleLogin = async () => {
         const result = await loginAction(username, password);
         
         if (result.success) {
-            localStorage.setItem("username", result.name); // Pro zobrazení jména v UI
+            localStorage.setItem("username", result.username);
+            const role = USER_ROLES[result.username] || "user";
+            localStorage.setItem("userRole", role);
             router.push("/splitter");
         } else {
             alert(result.error);
