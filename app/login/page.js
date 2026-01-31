@@ -36,7 +36,6 @@ export default function LoginPage() {
                     type="text"
                     id="username"
                     name="username"
-                    className="p-2 border rounded"
                     placeholder="uživatelské jméno..."
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -45,7 +44,6 @@ export default function LoginPage() {
                     type="password"
                     id="password"
                     name="password"
-                    className="p-2 border rounded"
                     placeholder="heslo..."
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

@@ -33,7 +33,8 @@ export default function FormPage({ initialTechnician }) {
     const [loading, setLoading] = useState(false);
     const signatureRef = useRef(null);
     const [signatureImage, setSignatureImage] = useState(null);
-    
+    //const userTechnician = technician();
+
     // --- 1. KOMPLETNÍ INICIALIZACE STAVU ---
     const createInitialState = () => {
         const state = {
@@ -92,34 +93,9 @@ export default function FormPage({ initialTechnician }) {
     const [formData, setFormData] = useState(createInitialState());
 
     useEffect(() => {
-        const saved = localStorage.getItem("draft_repair");
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                // Slijeme výchozí stav a uložená data
-                setFormData(prev => ({ ...prev, ...parsed }));
-            } catch (e) {
-                console.error("Chyba při načítání draftu", e);
-            }
-        }
-    }, []);
-    useEffect(() => {
-        // Podmínka: Ukládáme, jen pokud už máme SPZ, jméno nebo jsme dál než v 1. kroku
-        const hasData = formData.vehicleSPZ || formData.customerName || step > 1;
-        
-        if (hasData) {
-            const dataToSave = { ...formData };
-            CAR_PARTS.forEach(part => { dataToSave[part.id] = Array(10).fill(""); });
-            Object.keys(FIELD_LABELS).forEach(key => { dataToSave[key] = Array(3).fill(""); });
-            
-            localStorage.setItem("draft_repair", JSON.stringify(dataToSave));
-        }
-    }, [formData, step]);
-
-    // Nastavení aktuálního data při prvním načtení
-    useEffect(() => {
-        const today = new Date().toISOString().split('T')[0];
-        setFormData(prev => ({ ...prev, serviceDate: today }));
+        // Získání jména přihlášeného uživatele (Technika)
+        const technicianName = localStorage.getItem("username") || "";
+        setFormData(prev => ({ ...prev, technician: technicianName }));
     }, []);
 
     useEffect(() => {
@@ -128,12 +104,7 @@ export default function FormPage({ initialTechnician }) {
 
     // Handlery
     const handleChange = (e) => {
-        let { name, value } = e.target;
-
-        if (name === "vehicleSPZ" || name === "vehicleVIN") {
-            value = value.toUpperCase();
-        }
-
+        const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -273,7 +244,7 @@ export default function FormPage({ initialTechnician }) {
             zip.file(`${filename}.pdf`, pdfBlob);
 
             // Fotky do ZIPu
-            const photoFields = ['zapisOPoskozeni', 'pohledZePredu', 'pohledZePreduZleva', 'pohledZleva', 'pohledZezaduZleva', 'pohledZezadu', 'pohledZezaduZprava', 'pohledZprava', 'STK', 'VIN', 'tachometr', 'interier', ...CAR_PARTS.map(p => p.id)];
+            const photoFields = ['zapisOPoskozeni', 'pohledZePredu', 'pohledZePreduZleva', 'STK', 'VIN', 'tachometr', 'interier', ...CAR_PARTS.map(p => p.id)];
             for (const field of photoFields) {
                 for (let i = 0; i < formData[field].length; i++) {
                     const img = formData[field][i];
@@ -289,8 +260,6 @@ export default function FormPage({ initialTechnician }) {
             setLoading(false);
             alert("Hotovo!");
         };
-
-        localStorage.removeItem("draft_repair");
     };
 
     const isStep2Valid = () => {
@@ -310,22 +279,6 @@ export default function FormPage({ initialTechnician }) {
 
     return (
         <div className="max-w-4xl mx-auto p-4 bg-white min-h-screen">
-            <div className="flex justify-between items-center mb-6 pb-2 border-b">
-                <button
-                    type="button"
-                    onClick={() => {
-                        if (window.confirm("Opravdu chcete odejít? Veškerá zadaná data a fotky budou smazány.")) {
-                            router.push("/splitter"); // nebo tvoje hlavní cesta
-                        }
-                    }}
-                    className="text-sm font-bold text-gray-500 hover:text-red-600 transition-colors"
-                >
-                    ← ZPĚT NA VÝBĚR
-                </button>
-                <span className="text-[10px] bg-gray-100 px-2 py-1 rounded text-gray-500 font-mono">
-                    ID: {formData.vehicleSPZ || "NEW"}
-                </span>
-            </div>
             <div className="flex justify-between mb-8">
                 {[1, 2, 3].map(s => (
                     <div key={s} className={`flex-1 text-center py-2 border-b-4 ${step === s ? 'border-maingreen font-bold uppercase' : 'border-gray-200 uppercase'}`}>
@@ -344,7 +297,7 @@ export default function FormPage({ initialTechnician }) {
                                     <input type="text" name="technician" value={formData.technician} readOnly className="bg-gray-200 p-2 rounded cursor-not-allowed" />
                                 </label>
                                 <label className="flex flex-col text-sm font-semibold"><div>Značka vozidla <span className="text-red-600">*</span></div>
-                                    <select name="vehicleBrand" value={formData.vehicleBrand} onChange={handleChange} required className="select border rounded">
+                                    <select name="vehicleBrand" value={formData.vehicleBrand} onChange={handleChange} required className="p-2 border rounded">
                                         <option value="">Vyberte značku</option>
                                         {VEHICLE_BRANDS.map(brand => <option key={brand} value={brand}>{brand}</option>)}
                                     </select>
@@ -384,7 +337,6 @@ export default function FormPage({ initialTechnician }) {
                                 </label>
                                 <label className="flex flex-col text-sm font-semibold"><div>Pojišťovna <span className="text-red-600">*</span></div>
                                     <select
-                                        className="select border rounded"
                                         name="insuranceCompany"
                                         value={formData.insuranceCompany || ""}
                                         onChange={handleChange}
@@ -450,7 +402,7 @@ export default function FormPage({ initialTechnician }) {
                                                 <div key={i} className="flex items-center gap-2">
                                                     <input
                                                         type="file"
-                                                        //capture="camera"
+                                                        capture="camera"
                                                         className="text-md w-full border p-2 rounded bg-white shadow-inner focus:ring-2 focus:ring-green-500"
                                                         onChange={(e) => handleImageChange(field, i, e.target.files[0])}
                                                     />
