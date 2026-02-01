@@ -72,6 +72,7 @@ export default function FormPage({ initialTechnician }) {
             contractMD: '',
             contractPaint: '',
             detailNotes: '',
+            signatureImage: null,
             globalPhotographyNotes: '',
             globalPhotographyNotes2: '',
 
@@ -152,6 +153,14 @@ export default function FormPage({ initialTechnician }) {
 
         initApp();
     }, [initialTechnician]);
+
+    useEffect(() => {
+        if (formData.signatureImage) {
+            setSignatureImage(formData.signatureImage);
+        } else {
+            setSignatureImage(null);
+        }
+    }, [formData.signatureImage]);
 
     // Handlery
     const handleChange = (e) => {
@@ -282,11 +291,26 @@ export default function FormPage({ initialTechnician }) {
                 canvas.width,
                 canvas.height
             );
+
             context.globalCompositeOperation = 'destination-over';
             context.fillStyle = 'white';
             context.fillRect(0, 0, canvas.width, canvas.height);
+
             const dataUrl = canvas.toDataURL('image/png');
+
+            // AKTUALIZACE FORM DATA (aby se to uložilo do DB a exportovalo)
+            setFormData((prev) => {
+                const newState = { ...prev, signatureImage: dataUrl };
+                // Rovnou zálohujeme
+                if (newState.vehicleSPZ) {
+                    saveToBackup(newState.vehicleSPZ.trim(), newState);
+                }
+                return newState;
+            });
+
+            // Můžeš nechat i tento set pro okamžité zobrazení náhledu pod tlačítkem
             setSignatureImage(dataUrl);
+
             context.putImageData(originalImage, 0, 0);
             close();
         }
@@ -378,8 +402,8 @@ export default function FormPage({ initialTechnician }) {
                     doc.text('X', part.vymenaX, part.y);
             });
 
-            if (signatureImage)
-                doc.addImage(signatureImage, 'PNG', 35, 266, 50, 20);
+            if (formData.signatureImage)
+                doc.addImage(formData.signatureImage, 'PNG', 35, 266, 50, 20);
 
             // Poznámky (splitTextToSize pro zalomení řádků)
             if (formData.detailNotes) {
