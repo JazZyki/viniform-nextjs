@@ -430,7 +430,17 @@ export default function FormPage({ initialTechnician }) {
                 await clearAllDrafts();
             }
             setLoading(false);
-            alert('Hotovo!');
+
+            setTimeout(() => {
+                alert(
+                    'Hotovo! Zakázka byla uložena do archivu, kde bude následujícíh 30 dní a soubor ZIP je stažen do Vašeho zařízení.'
+                );
+                setFormData(createInitialState());
+                setStep(1);
+                setSignatureImage(null);
+
+                router.push('/splitter');
+            }, 1000);
         };
     };
 
@@ -618,17 +628,6 @@ export default function FormPage({ initialTechnician }) {
                                 >
                                     Export
                                 </button>
-                                {isAdminOrEditor && (
-                                    <label className="text-sm bg-white border text-maingreen border-maingreen px-3 py-1.5 rounded hover:bg-green-100 cursor-pointer flex items-center gap-1 shadow-sm">
-                                        Import
-                                        <input
-                                            type="file"
-                                            accept=".json"
-                                            className="hidden"
-                                            onChange={handleImport}
-                                        />
-                                    </label>
-                                )}
                             </div>
                         </div>
                         <div className="space-y-6">

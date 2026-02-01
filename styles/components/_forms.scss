@@ -11,7 +11,7 @@ input {
         //margin-bottom: 1rem;
         padding: 0.25rem 0.5rem;
         transition: b.$transition;
-        border: 1px solid b.$basic-grey;
+        border: 1px solid b.$basic-green;
         //border-radius: 1rem;
         font-size: 1.2rem;
         transition: b.$transition;
@@ -34,7 +34,7 @@ select,
 textarea {
     width: 100%;
     background-color: #fff;
-    border: 1px solid b.$basic-grey;
+    border: 1px solid b.$basic-green;
     border-radius: 0.25rem;
     font-size: 1.2rem !important;
     padding: 0.1rem 0.5rem !important;
