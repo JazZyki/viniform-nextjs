@@ -861,6 +861,7 @@ export default function FormPage({ initialTechnician }) {
                                                                             type="file"
                                                                             accept="image/*"
                                                                             className="hidden"
+                                                                            //capture="camera"
                                                                             onChange={(
                                                                                 e
                                                                             ) =>

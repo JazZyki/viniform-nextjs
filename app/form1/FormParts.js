@@ -80,6 +80,7 @@ export default function FormPart({
                                 type="file"
                                 accept="image/*"
                                 className="hidden"
+                                //capture="camera"
                                 onChange={(e) =>
                                     onImageChange(
                                         id,
