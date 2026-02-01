@@ -859,7 +859,7 @@ export default function FormPage({ initialTechnician }) {
                                                                         </span>
                                                                         <input
                                                                             type="file"
-                                                                            accept="image/*"
+                                                                            accept="image/*;capture=camera"
                                                                             className="hidden"
                                                                             //capture="camera"
                                                                             onChange={(

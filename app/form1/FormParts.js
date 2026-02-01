@@ -78,7 +78,7 @@ export default function FormPart({
                             </span>
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/*; capture=camera"
                                 className="hidden"
                                 //capture="camera"
                                 onChange={(e) =>
