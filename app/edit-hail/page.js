@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { FormInput } from '../form1/FormInput';
-import { CAR_PARTS, VEHICLE_BRANDS } from '../form1/config';
+import { FormInput } from '../kroupy/FormInput';
+import { CAR_PARTS, VEHICLE_BRANDS } from '../kroupy/config';
 import { calculatePartPrice } from '../../lib/priceCalculator';
 import { generateFinalPDF } from '../../lib/pdfGenerator';
 import { useRouter } from 'next/navigation';
@@ -102,8 +102,8 @@ export default function CalculatorPage() {
         <div className="max-w-6xl mx-auto p-4 min-h-screen pb-4" key={formKey}>
             {/* TOOLBAR */}
             <div className="flex flex-col items-center mb-8 bg-white ">
-                <h2 className="w-full text-2xl font-black text-maingreen uppercase">
-                    Editace zakázky
+                <h2 className="w-full text-2xl font-black text-center mb-4 text-maingreen uppercase">
+                    Editace zakázky - poškození kroupami
                 </h2>
                 <div className="flex justify-between flex-row w-full">
                     <button
@@ -132,6 +132,7 @@ export default function CalculatorPage() {
                     <h2 className="font-bold text-maingreen border-b pb-2 uppercase text-xl ">
                         Informace o vozidle
                     </h2>
+                    <div className="grid grid-cols-2 gap-4">
                     <FormInput
                         label="SPZ"
                         name="vehicleSPZ"
@@ -208,6 +209,7 @@ export default function CalculatorPage() {
                         value={formData.serviceDate}
                         onChange={handleFieldChange}
                     />
+                    </div>
 
                     <div className="pt-4">
                         <h2 className="font-bold text-[##4d4d4d] text-sm mb-2">

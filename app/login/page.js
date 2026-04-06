@@ -12,17 +12,21 @@ export default function LoginPage() {
     const router = useRouter();
 
     const handleLogin = async () => {
-        const result = await loginAction(username, password);
+    const result = await loginAction(username, password);
+    
+    if (result.success) {
+        // TADY: Přidáme chybějící klíč, který pak formPage kontroluje
+        localStorage.setItem("isLoggedIn", "true"); 
+        localStorage.setItem("username", result.username);
         
-        if (result.success) {
-            localStorage.setItem("username", result.username);
-            const role = USER_ROLES[result.username] || "user";
-            localStorage.setItem("userRole", role);
-            router.push("/splitter");
-        } else {
-            alert(result.error);
-        }
-    };
+        const role = USER_ROLES[result.username] || "user";
+        localStorage.setItem("userRole", role);
+        
+        router.push("/splitter");
+    } else {
+        alert(result.error);
+    }
+};
 
     return (
         <PWAWrapper>

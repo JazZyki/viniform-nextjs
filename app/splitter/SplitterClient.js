@@ -22,23 +22,30 @@ export default function SplitterClient() {
             <div className="flex flex-col justify-center gap-4 mt-8">
                 <button
                     className="btn btn-primary"
-                    onClick={() => router.push('/form1')}
+                    onClick={() => router.push('/koupy')}
                 >
                     Poškození po kroupách
                 </button>
                 <button
                     className="btn btn-primary"
-                    onClick={() => router.push('/form2')}
-                >
+                    onClick={() => router.push('/parking')}>
                     Poškození z parkoviště
                 </button>
                 {hasAccessToEdit && (
+                    <>
                     <button
                         className="btn btn-secondary"
-                        onClick={() => router.push('/edit')}
+                        onClick={() => router.push('/edit-hail')}
                     >
-                        Editace údajů
+                        Editace údajů - Kroupy
                     </button>
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => router.push('/edit-parking')}
+                    >
+                        Editace údajů - Parkoviště
+                    </button>
+                    </>
                 )}
             </div>
         </div>
