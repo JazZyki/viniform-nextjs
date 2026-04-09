@@ -6,5 +6,6 @@ export const USER_ROLES = {
     "Talafova": "editor",
     "Hlavsova": "editor",
     "Horynova": "editor",
+    "Broz": "editor",
     // Všechny ostatní, co tu nejsou, budeme považovat za "user"
 };
