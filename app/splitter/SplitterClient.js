@@ -22,7 +22,7 @@ export default function SplitterClient() {
             <div className="flex flex-col justify-center gap-4 mt-8">
                 <button
                     className="btn btn-primary"
-                    onClick={() => router.push('/koupy')}
+                    onClick={() => router.push('/kroupy')}
                 >
                     Poškození po kroupách
                 </button>
