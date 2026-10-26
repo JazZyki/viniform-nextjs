@@ -1,6 +1,7 @@
 'use client';
 import { calculatePartPrice } from '../../lib/priceCalculator';
 import { ImagePreview } from './ImagePreview'; // Importujeme naši novou komponentu
+import { REQUIRE_PART_PHOTOS } from './config';
 
 export default function FormPart({
     id,
@@ -11,6 +12,7 @@ export default function FormPart({
     onRemoveImage,
     onChange,
     onCheckboxChange,
+    isAdminOrEditor = false,
 }) {
     const images = formData[id] || [];
     const filledImages = images.filter((img) => img instanceof File);
@@ -29,8 +31,8 @@ export default function FormPart({
         formData[`${id}Lak`]
     );
 
-    const userRole = localStorage.getItem('userRole');
-    const isAdminOrEditor = userRole === 'admin' || userRole === 'editor';
+    // isAdminOrEditor je předán z props (FormClient), aby nevznikal hydration mismatch
+
     const hasNoImage = filledImages.length === 0;
 
     return (
@@ -39,7 +41,7 @@ export default function FormPart({
                 <p className="font-bold text-lg uppercase text-maingreen">
                     {label}
                 </p>
-                {hasNoImage && (
+                {REQUIRE_PART_PHOTOS && hasNoImage && (
                     <span className="text-[#8f2215] text-[10px] font-black uppercase tracking-tighter">
                         ⚠ Povinná fotografie dílu
                     </span>

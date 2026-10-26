@@ -49,8 +49,8 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="cs">
-      <body>
+    <html lang="cs" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <div className="min-h-screen max-w-md m-auto bg-white overflow-hidden">
           <div>
             <img src="../logo.png" alt="VinicarsLogo" width={100} className="pt-8 w-[90%] m-auto" />

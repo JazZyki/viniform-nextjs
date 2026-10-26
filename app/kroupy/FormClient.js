@@ -9,7 +9,7 @@ import Popup from 'reactjs-popup';
 import SignatureCanvas from 'react-signature-canvas';
 import { robotoBase64 } from '../../lib/fonts/Roboto-Condensed-normal';
 import { calculatePartPrice } from '../../lib/priceCalculator';
-import { CAR_PARTS, VEHICLE_BRANDS } from './config';
+import { CAR_PARTS, VEHICLE_BRANDS, REQUIRE_GLOBAL_PHOTOS, REQUIRE_PART_PHOTOS } from './config';
 import FormPart from './FormParts';
 import {
     saveToBackup,
@@ -490,6 +490,7 @@ export default function FormPage({ initialTechnician }) {
     };
 
     const isStep2Valid = () => {
+        if (!REQUIRE_GLOBAL_PHOTOS) return true;
         // Seznam polí, která musí mít alespoň jednu fotku
         const requiredFields = [
             'zapisOPoskozeni',
@@ -514,6 +515,7 @@ export default function FormPage({ initialTechnician }) {
     };
 
     const isStep3Valid = () => {
+        if (!REQUIRE_PART_PHOTOS) return true;
         return CAR_PARTS.every((part) => {
             const images = formData[part.id] || [];
             return images.some((img) => img instanceof File);
@@ -836,7 +838,7 @@ export default function FormPage({ initialTechnician }) {
                                             <p className="font-bold text-lg uppercase text-maingreen pb-1">
                                                 {FIELD_LABELS[field]}
                                             </p>
-                                            {hasNoImage && (
+                                            {REQUIRE_GLOBAL_PHOTOS && hasNoImage && (
                                                 <span className="text-[#8f2215] text-[10px] font-black uppercase tracking-tighter">
                                                     ⚠ Povinná fotografie
                                                 </span>
@@ -926,6 +928,7 @@ export default function FormPage({ initialTechnician }) {
                                 label={part.label}
                                 category={part.category}
                                 formData={formData}
+                                isAdminOrEditor={isAdminOrEditor}
                                 onImageChange={handleImageChange}
                                 onChange={handleChange}
                                 onCheckboxChange={handleCheckboxChange}

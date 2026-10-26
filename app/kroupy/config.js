@@ -1,5 +1,9 @@
 // app/form1/config.js
 
+// Nastavení povinnosti fotografií (přepnutím na true se povinnost opět aktivuje)
+export const REQUIRE_GLOBAL_PHOTOS = false; // Krok 2: Globální fotky vozu (zápis, obvodové pohledy, STK, VIN, ...)
+export const REQUIRE_PART_PHOTOS = false;   // Krok 3: Fotografie jednotlivých poškozených dílů
+
 export const CAR_PARTS = [
     { id: 'kapota', label: 'Kapota', category: 'horizontal', x: 50, y: 139, lakX: 100, vymenaX: 118 },
     { id: 'strecha', label: 'Střecha', category: 'horizontal', x: 50, y: 145, lakX: 100, vymenaX: 118 },
