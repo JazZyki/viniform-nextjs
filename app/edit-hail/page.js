@@ -28,8 +28,12 @@ export default function CalculatorPage() {
             detailNotes: '',
         };
         CAR_PARTS.forEach((part) => {
-            state[`${part.id}Count`] = 0;
-            state[`${part.id}Diameter`] = '';
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                state[countKey] = 0;
+                state[diamKey] = '';
+            }
             state[`${part.id}Alu`] = false;
             state[`${part.id}Lak`] = false;
             state[`${part.id}Vymena`] = false;
@@ -83,12 +87,16 @@ export default function CalculatorPage() {
     const getPricing = () => {
         let baseSum = 0;
         CAR_PARTS.forEach((part) => {
-            const count = parseInt(formData[`${part.id}Count`]) || 0;
-            const diam = formData[`${part.id}Diameter`];
-            const alu = formData[`${part.id}Alu`];
-            const lak = formData[`${part.id}Lak`];
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                const count = parseInt(formData[countKey]) || 0;
+                const diam = formData[diamKey];
+                const alu = formData[`${part.id}Alu`];
+                const lak = formData[`${part.id}Lak`];
 
-            baseSum += calculatePartPrice(count, diam, part.category, alu, lak);
+                baseSum += calculatePartPrice(count, diam, part.category, alu, lak);
+            }
         });
         // Přidáme 2% režii
         const total = Math.round(baseSum * 1.02);
@@ -96,6 +104,12 @@ export default function CalculatorPage() {
     };
 
     const pricing = getPricing();
+
+    const parsedYear = parseInt(formData.vehicleYear?.toString().trim(), 10);
+    const isYearWarning =
+        !isNaN(parsedYear) &&
+        ((formData.vehicleYear?.toString().trim().length >= 4 && parsedYear < 2020) ||
+            (parsedYear > 1900 && parsedYear < 2020));
     const router = useRouter();
 
     return (
@@ -177,6 +191,7 @@ export default function CalculatorPage() {
                         name="vehicleYear"
                         value={formData.vehicleYear}
                         onChange={handleFieldChange}
+                        warning={isYearWarning ? 'Vozidlo starší roku 2020' : null}
                     />
                     <FormInput
                         label="Barva"
@@ -230,14 +245,22 @@ export default function CalculatorPage() {
                         Opravované díly
                     </h2>
                     {CAR_PARTS.map((part) => {
-                        const price = calculatePartPrice(
-                            parseInt(formData[`${part.id}Count`]) || 0,
-                            formData[`${part.id}Diameter`],
-                            part.category,
-                            formData[`${part.id}Alu`],
-                            formData[`${part.id}Lak`],
-                            formData[`${part.id}Vymena`]
-                        );
+                        let price = 0;
+                        for (let i = 1; i <= 10; i++) {
+                            const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                            const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                            const c = parseInt(formData[countKey]) || 0;
+                            const d = formData[diamKey];
+                            if (c > 0 && d) {
+                                price += calculatePartPrice(
+                                    c,
+                                    d,
+                                    part.category,
+                                    formData[`${part.id}Alu`],
+                                    formData[`${part.id}Lak`]
+                                );
+                            }
+                        }
 
                         return (
                             <div
@@ -256,29 +279,55 @@ export default function CalculatorPage() {
                                             : '-'}
                                     </div>
                                 </div>
-                                <div className="w-1/2 py-2 px-4">
-                                    <input
-                                        type="number"
-                                        name={`${part.id}Count`}
-                                        value={formData[`${part.id}Count`] ?? 0}
-                                        onChange={handleFieldChange}
-                                        className="w-full border rounded-md p-0 text-center font-bold"
-                                    />
-                                </div>
-                                <div className="w-1/2 py-2 px-4">
-                                    <select
-                                        name={`${part.id}Diameter`}
-                                        value={
-                                            formData[`${part.id}Diameter`] ?? ''
-                                        }
-                                        onChange={handleFieldChange}
-                                        className="w-full border rounded-md font-bold bg-white"
-                                    >
-                                        <option value="">-</option>
-                                        <option value="20">20mm</option>
-                                        <option value="30">30mm</option>
-                                        <option value="40">40mm</option>
-                                    </select>
+                                <div className="w-full space-y-2">
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                                        const countKey = num === 1 ? `${part.id}Count` : `${part.id}Count${num}`;
+                                        const diamKey = num === 1 ? `${part.id}Diameter` : `${part.id}Diameter${num}`;
+                                        const prevCountKey = num === 2 ? `${part.id}Count` : `${part.id}Count${num - 1}`;
+                                        const prevDiamKey = num === 2 ? `${part.id}Diameter` : `${part.id}Diameter${num - 1}`;
+
+                                        const prevCount = parseInt(formData[prevCountKey]) || 0;
+                                        const prevDiam = formData[prevDiamKey];
+                                        const currentCount = parseInt(formData[countKey]) || 0;
+                                        const currentDiam = formData[diamKey];
+
+                                        const isVisible =
+                                            num === 1 ||
+                                            (prevCount > 0 && prevDiam !== '') ||
+                                            currentCount > 0 ||
+                                            Boolean(currentDiam);
+
+                                        if (!isVisible) return null;
+
+                                        return (
+                                            <div key={num} className="flex flex-row">
+                                                <div className="w-1/2 py-1 px-4">
+                                                    <input
+                                                        type="number"
+                                                        name={countKey}
+                                                        value={formData[countKey] ?? 0}
+                                                        onChange={handleFieldChange}
+                                                        className="w-full border rounded-md p-1 text-center font-bold"
+                                                        min="0"
+                                                        onFocus={(e) => e.target.value === '0' && (e.target.value = '')}
+                                                    />
+                                                </div>
+                                                <div className="w-1/2 py-1 px-4">
+                                                    <select
+                                                        name={diamKey}
+                                                        value={formData[diamKey] ?? ''}
+                                                        onChange={handleFieldChange}
+                                                        className="w-full border rounded-md p-1 font-bold bg-white"
+                                                    >
+                                                        <option value="">-</option>
+                                                        <option value="20">20mm</option>
+                                                        <option value="30">30mm</option>
+                                                        <option value="40">40mm</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                                 <div className="p-4 flex flex-row justify-between w-full mt-2">
                                     <label className="flex items-center gap-1.5 text-sm font-black text-maingreen">

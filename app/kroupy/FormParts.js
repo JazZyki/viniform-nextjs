@@ -1,5 +1,5 @@
 'use client';
-import { calculatePartPrice } from '../../lib/priceCalculator';
+import { calculateTotalPartPrice } from '../../lib/priceCalculator';
 import { ImagePreview } from './ImagePreview'; // Importujeme naši novou komponentu
 import { REQUIRE_PART_PHOTOS } from './config';
 
@@ -20,12 +20,15 @@ export default function FormPart({
     // Zobrazíme tolik náhledů, kolik je fotek + 1 slot pro nahrávání (max 5)
     const canAddMore = filledImages.length < 5;
 
-    const count = parseInt(formData[`${id}Count`]) || 0;
-    const diameter = formData[`${id}Diameter`];
+    const damages = [];
+    for (let num = 1; num <= 10; num++) {
+        const cKey = num === 1 ? `${id}Count` : `${id}Count${num}`;
+        const dKey = num === 1 ? `${id}Diameter` : `${id}Diameter${num}`;
+        damages.push({ count: formData[cKey], diameter: formData[dKey] });
+    }
 
-    const currentPrice = calculatePartPrice(
-        count,
-        diameter,
+    const currentPrice = calculateTotalPartPrice(
+        damages,
         category,
         formData[`${id}Alu`],
         formData[`${id}Lak`]
@@ -96,39 +99,62 @@ export default function FormPart({
                 </div>
             </div>
 
-            {/* Parametry dílu */}
-            <div className="grid grid-cols-2 gap-4">
-                <label>
-                    <span className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                        Počet důlků
-                    </span>
-                    <input
-                        type="number"
-                        name={`${id}Count`}
-                        value={formData[`${id}Count`] || 0}
-                        onChange={onChange}
-                        className="w-full p-2 border rounded-lg bg-white"
-                        min="0"
-                    />
-                </label>
-                <label>
-                    <span className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                        Průměr
-                    </span>
-                    <select
-                        name={`${id}Diameter`}
-                        value={formData[`${id}Diameter`] || ''}
-                        onChange={onChange}
-                        className="w-full p-2 border rounded-lg bg-white h-[42px]"
-                    >
-                        <option value="" disabled>
-                            Vyberte...
-                        </option>
-                        <option value="20">20 mm</option>
-                        <option value="30">30 mm</option>
-                        <option value="40">40 mm</option>
-                    </select>
-                </label>
+            {/* Parametry dílu - až 10 poškození */}
+            <div className="space-y-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                    const countKey = num === 1 ? `${id}Count` : `${id}Count${num}`;
+                    const diamKey = num === 1 ? `${id}Diameter` : `${id}Diameter${num}`;
+                    const prevCountKey = num === 2 ? `${id}Count` : `${id}Count${num - 1}`;
+                    const prevDiamKey = num === 2 ? `${id}Diameter` : `${id}Diameter${num - 1}`;
+
+                    const prevCount = parseInt(formData[prevCountKey]) || 0;
+                    const prevDiam = formData[prevDiamKey];
+                    const currentCount = parseInt(formData[countKey]) || 0;
+                    const currentDiam = formData[diamKey];
+
+                    const isVisible =
+                        num === 1 ||
+                        (prevCount > 0 && prevDiam !== '') ||
+                        currentCount > 0 ||
+                        Boolean(currentDiam);
+
+                    if (!isVisible) return null;
+
+                    return (
+                        <div key={num} className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-1 duration-300">
+                            <label>
+                                <span className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                                    Počet důlků ({num})
+                                </span>
+                                <input
+                                    type="number"
+                                    name={countKey}
+                                    value={formData[countKey] !== undefined ? formData[countKey] : 0}
+                                    onChange={onChange}
+                                    className="w-full p-2 border rounded-lg bg-white h-[42px]"
+                                    min="0"
+                                    onFocus={(e) => e.target.value === '0' && (e.target.value = '')}
+                                />
+                            </label>
+                            <label>
+                                <span className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                                    Průměr ({num})
+                                </span>
+                                <select
+                                    name={diamKey}
+                                    value={formData[diamKey] || ''}
+                                    onChange={onChange}
+                                    className="w-full p-2 border rounded-lg bg-white h-[42px]"
+                                >
+                                    <option value="">Vyberte...</option>
+                                    <option value="20">20 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="40">40 mm</option>
+                                </select>
+                            </label>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Checkboxy - v jedné řadě pro úsporu místa */}

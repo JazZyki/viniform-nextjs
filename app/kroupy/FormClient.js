@@ -97,10 +97,15 @@ export default function FormPage({ initialTechnician }) {
         // Krok 3: Dynamické díly
         CAR_PARTS.forEach((part) => {
             state[part.id] = Array(10).fill('');
-            state[`${part.id}Count`] = 0;
-            state[`${part.id}Diameter`] = '';
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                state[countKey] = 0;
+                state[diamKey] = '';
+            }
             state[`${part.id}Lak`] = false;
             state[`${part.id}Vymena`] = false;
+            state[`${part.id}Alu`] = false;
         });
 
         return state;
@@ -319,19 +324,22 @@ export default function FormPage({ initialTechnician }) {
     const getGrandTotal = () => {
         let baseSum = 0;
         CAR_PARTS.forEach((part) => {
-            // TADY byla asi chyba - musíš použít part.id, ne jen id
-            const count = parseInt(formData[`${part.id}Count`]) || 0;
-            const diameter = formData[`${part.id}Diameter`];
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                const count = parseInt(formData[countKey]) || 0;
+                const diameter = formData[diamKey];
 
-            const partPrice = calculatePartPrice(
-                count,
-                diameter,
-                part.category, // oprava z category na part.category
-                formData[`${part.id}Alu`],
-                formData[`${part.id}Lak`]
-            );
+                const partPrice = calculatePartPrice(
+                    count,
+                    diameter,
+                    part.category,
+                    formData[`${part.id}Alu`],
+                    formData[`${part.id}Lak`]
+                );
 
-            baseSum += partPrice;
+                baseSum += partPrice;
+            }
         });
 
         const fee = baseSum * 0.02;
@@ -343,6 +351,12 @@ export default function FormPage({ initialTechnician }) {
     };
 
     const pricing = getGrandTotal();
+
+    const parsedYear = parseInt(formData.vehicleYear?.toString().trim(), 10);
+    const isYearWarning =
+        !isNaN(parsedYear) &&
+        ((formData.vehicleYear?.toString().trim().length >= 4 && parsedYear < 2020) ||
+            (parsedYear > 1900 && parsedYear < 2020));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -393,10 +407,28 @@ export default function FormPage({ initialTechnician }) {
 
             // Dynamické vykreslení dílů z config.js
             CAR_PARTS.forEach((part) => {
-                const count = formData[`${part.id}Count`];
-                const diam = formData[`${part.id}Diameter`];
-                if (count > 0) doc.text(`${count}`, part.x, part.y);
-                if (diam) doc.text(`${diam}`, part.x + 25, part.y);
+                const activeDents = [];
+                for (let i = 1; i <= 10; i++) {
+                    const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                    const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                    const c = parseInt(formData[countKey]) || 0;
+                    const d = formData[diamKey];
+                    if (c > 0 && d) {
+                        activeDents.push({ count: c, diam: d });
+                    }
+                }
+                if (activeDents.length > 0) {
+                    const countsStr = activeDents.map((d) => d.count).join(', ');
+                    const diamsStr = activeDents.map((d) => d.diam).join(', ');
+                    if (activeDents.length > 1) {
+                        doc.setFontSize(countsStr.length > 6 || diamsStr.length > 6 ? 9 : 11);
+                    } else {
+                        doc.setFontSize(13);
+                    }
+                    doc.text(countsStr, part.x, part.y);
+                    doc.text(diamsStr, part.x + 25, part.y);
+                    doc.setFontSize(13);
+                }
                 if (formData[`${part.id}Lak`]) doc.text('X', part.lakX, part.y);
                 if (formData[`${part.id}Vymena`])
                     doc.text('X', part.vymenaX, part.y);
@@ -719,6 +751,7 @@ export default function FormPage({ initialTechnician }) {
                                         onChange={handleChange}
                                         required
                                         disabled={!isSpzReady}
+                                        warning={isYearWarning ? 'Vozidlo starší roku 2020' : null}
                                     />
                                     <FormInput
                                         label="Stav tachometru (km)"
@@ -768,7 +801,7 @@ export default function FormPage({ initialTechnician }) {
                                         type="select"
                                         options={[
                                             'Allianz',
-                                            'AXA',
+                                             'AXA',
                                             'ČPP',
                                             'ČSOB Pojišťovna',
                                             'Direct',

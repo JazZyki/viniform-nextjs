@@ -114,12 +114,15 @@ export default function FormPage({ initialTechnician }) {
         // Krok 3: Dynamické díly
         [...CAR_PARTS, ...ADDITIONAL_DAMAGES].forEach((part) => {
             state[part.id] = Array(10).fill('');
-            state[`${part.id}Count`] = 0;
-            state[`${part.id}Diameter`] = '';
-            state[`${part.id}Count2`] = 0;
-            state[`${part.id}Diameter`] = '';
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                state[countKey] = 0;
+                state[diamKey] = '';
+            }
             state[`${part.id}Lak`] = false;
             state[`${part.id}Vymena`] = false;
+            state[`${part.id}Alu`] = false;
         });
 
         return state;
@@ -350,11 +353,14 @@ export default function FormPage({ initialTechnician }) {
 
         // 1. Spočítáme základní plné ceny dílů
         const calculatedParts = allPossibleParts.map((part) => {
+            const damages = [];
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                damages.push({ count: formData[countKey], diameter: formData[diamKey] });
+            }
             const basePrice = calculateDentPrice(
-                formData[`${part.id}Count`],
-                formData[`${part.id}Diameter`],
-                formData[`${part.id}Count2`],
-                formData[`${part.id}Diameter2`],
+                damages,
                 formData[`${part.id}Alu`],
                 formData[`${part.id}Lak`],
                 isGlobalMode
@@ -411,6 +417,12 @@ export default function FormPage({ initialTechnician }) {
 
     const pricing = getGrandTotal();
 
+    const parsedYear = parseInt(formData.vehicleYear?.toString().trim(), 10);
+    const isYearWarning =
+        !isNaN(parsedYear) &&
+        ((formData.vehicleYear?.toString().trim().length >= 4 && parsedYear < 2020) ||
+            (parsedYear > 1900 && parsedYear < 2020));
+
     const formatCzechDate = (dateStr) => {
         if (!dateStr) return '';
         const date = new Date(dateStr);
@@ -431,9 +443,11 @@ export default function FormPage({ initialTechnician }) {
 
         const activeDamages = [...CAR_PARTS, ...ADDITIONAL_DAMAGES].filter(
             (part) => {
-                const count = parseInt(formData[`${part.id}Count`]) || 0;
+                const hasCount = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].some(
+                    (num) => (parseInt(formData[num === 1 ? `${part.id}Count` : `${part.id}Count${num}`]) || 0) > 0
+                );
                 const price = realPartPrices[part.id] || 0;
-                return count > 0 && price > 0;
+                return hasCount && price > 0;
             }
         );
 
@@ -564,17 +578,20 @@ export default function FormPage({ initialTechnician }) {
             doc.setDrawColor(200, 200, 200); // Světle šedá pro řádky
 
             activeDamages.forEach((part) => {
-                const count1 = formData[`${part.id}Count`] || 0;
-                const diam1 = formData[`${part.id}Diameter`] || '-';
-                const count2 = formData[`${part.id}Count2`] || 0;
-                const diam2 = formData[`${part.id}Diameter2`] || '';
+                const damages = [];
+                for (let i = 1; i <= 10; i++) {
+                    const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                    const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                    const c = parseInt(formData[countKey]) || 0;
+                    const d = formData[diamKey] || '';
+                    if (c > 0 || d !== '') {
+                        damages.push({ count: c, diam: d });
+                    }
+                }
 
                 const lak = formData[`${part.id}Lak`] ? 'ANO' : 'NE';
                 const alu = formData[`${part.id}Alu`] ? 'ANO' : 'NE';
                 const vym = formData[`${part.id}Vymena`] ? 'ANO' : 'NE';
-
-                // Pomocná proměnná pro zjištění, jestli máme dva řádky dat
-                const hasSecondRow = count2 > 0 && diam2 !== '';
 
                 // Vykreslení Labelu, Laku, Alu a Výměny (ty jsou pro díl společné)
                 doc.text(`${part.label}`, startX, currentY);
@@ -599,28 +616,24 @@ export default function FormPage({ initialTechnician }) {
                     currentY
                 );
 
-                // Vykreslení prvního řádku KS a PRŮMĚR
-                doc.text(`${count1}`, startX + col.label, currentY);
-                doc.text(
-                    `${diam1} mm`,
-                    startX + col.label + col.count,
-                    currentY
-                );
-
-                if (hasSecondRow) {
-                    // Posuneme se o kousek níž pro druhý řádek v rámci téhož dílu
-                    currentY += 4.5;
-
-                    // Vykreslení druhého řádku KS a PRŮMĚR
-                    doc.text(`${count2}`, startX + col.label, currentY);
-                    doc.text(
-                        `${diam2} mm`,
-                        startX + col.label + col.count,
-                        currentY
-                    );
-
-                    // Přidáme malý posun, aby border nebyl nalepený na textu
-                    currentY += 1;
+                if (damages.length === 0) {
+                    doc.text('0', startX + col.label, currentY);
+                    doc.text('-', startX + col.label + col.count, currentY);
+                } else {
+                    damages.forEach((dmg, idx) => {
+                        if (idx > 0) {
+                            currentY += 4.5;
+                        }
+                        doc.text(`${dmg.count}`, startX + col.label, currentY);
+                        doc.text(
+                            dmg.diam ? `${dmg.diam} mm` : '-',
+                            startX + col.label + col.count,
+                            currentY
+                        );
+                    });
+                    if (damages.length > 1) {
+                        currentY += 1;
+                    }
                 }
 
                 // Čára pod celým blokem dílu
@@ -951,6 +964,7 @@ export default function FormPage({ initialTechnician }) {
                                             onChange={handleChange}
                                             //required
                                             disabled={!isSpzReady}
+                                            warning={isYearWarning ? 'Vozidlo starší roku 2020' : null}
                                         />
                                     )}
                                     {!userConfig.hiddenFields.includes(
@@ -1208,13 +1222,9 @@ export default function FormPage({ initialTechnician }) {
                             {ADDITIONAL_DAMAGES.map((part, index) => {
                                 const isVisible =
                                     index === 0 ||
-                                    parseInt(
-                                        formData[
-                                            `${
-                                                ADDITIONAL_DAMAGES[index - 1].id
-                                            }Count`
-                                        ]
-                                    ) > 0;
+                                    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].some(
+                                        (num) => (parseInt(formData[num === 1 ? `${ADDITIONAL_DAMAGES[index - 1].id}Count` : `${ADDITIONAL_DAMAGES[index - 1].id}Count${num}`]) || 0) > 0
+                                    );
 
                                 if (!isVisible) return null;
 

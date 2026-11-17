@@ -40,10 +40,12 @@ export default function CalculatorPage() {
         };
         // Inicializace pro všechny díly (včetně extra)
         [...CAR_PARTS, ...ADDITIONAL_DAMAGES].forEach((part) => {
-            state[`${part.id}Count`] = 0;
-            state[`${part.id}Diameter`] = '';
-            state[`${part.id}Count2`] = 0;
-            state[`${part.id}Diameter2`] = '';
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                state[countKey] = 0;
+                state[diamKey] = '';
+            }
             state[`${part.id}Alu`] = false;
             state[`${part.id}Lak`] = false;
             state[`${part.id}Vymena`] = false;
@@ -103,11 +105,14 @@ export default function CalculatorPage() {
     const getRealPartPrices = () => {
         const allPossibleParts = [...CAR_PARTS, ...ADDITIONAL_DAMAGES];
         const calculatedParts = allPossibleParts.map((part) => {
+            const damages = [];
+            for (let i = 1; i <= 10; i++) {
+                const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                damages.push({ count: formData[countKey], diameter: formData[diamKey] });
+            }
             const basePrice = calculateDentPrice(
-                formData[`${part.id}Count`],
-                formData[`${part.id}Diameter`],
-                formData[`${part.id}Count2`],
-                formData[`${part.id}Diameter2`],
+                damages,
                 formData[`${part.id}Alu`],
                 formData[`${part.id}Lak`],
                 isGlobalMode,
@@ -149,6 +154,12 @@ export default function CalculatorPage() {
     };
 
     const pricing = getGrandTotal();
+
+    const parsedYear = parseInt(formData.vehicleYear?.toString().trim(), 10);
+    const isYearWarning =
+        !isNaN(parsedYear) &&
+        ((formData.vehicleYear?.toString().trim().length >= 4 && parsedYear < 2020) ||
+            (parsedYear > 1900 && parsedYear < 2020));
 
     // Seřazené pole pro určení orderIndex (kvůli badgům)
     const activePartsSorted = [...CAR_PARTS, ...ADDITIONAL_DAMAGES]
@@ -216,25 +227,30 @@ export default function CalculatorPage() {
 
             // Filtrujeme všechny aktivní díly (včetně ADDITIONAL_DAMAGES)
             const activeDamages = [...CAR_PARTS, ...ADDITIONAL_DAMAGES].filter(
-                (part) => (parseInt(formData[`${part.id}Count`]) || 0) > 0,
+                (part) => {
+                    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].some(
+                        (num) => (parseInt(formData[num === 1 ? `${part.id}Count` : `${part.id}Count${num}`]) || 0) > 0
+                    );
+                }
             );
 
             activeDamages.forEach((part) => {
-                const count1 = formData[`${part.id}Count`] || 0;
-                const diam1 = formData[`${part.id}Diameter`] || '-';
-                const count2 = formData[`${part.id}Count2`] || 0;
-                const diam2 = formData[`${part.id}Diameter2`] || '';
+                const damages = [];
+                for (let i = 1; i <= 10; i++) {
+                    const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
+                    const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
+                    const c = parseInt(formData[countKey]) || 0;
+                    const d = formData[diamKey] || '';
+                    if (c > 0 || d !== '') {
+                        damages.push({ count: c, diam: d });
+                    }
+                }
+
                 const lak = formData[`${part.id}Lak`] ? 'ANO' : 'NE';
                 const alu = formData[`${part.id}Alu`] ? 'ANO' : 'NE';
                 const vym = formData[`${part.id}Vymena`] ? 'ANO' : 'NE';
 
                 doc.text(`${part.label}`, startX, currentY);
-                doc.text(`${count1}`, startX + col.label, currentY);
-                doc.text(
-                    `${diam1} mm`,
-                    startX + col.label + col.count,
-                    currentY,
-                );
                 doc.text(
                     `${lak}`,
                     startX + col.label + col.count + col.diam,
@@ -256,15 +272,24 @@ export default function CalculatorPage() {
                     currentY,
                 );
 
-                if (count2 > 0 && diam2 !== '') {
-                    currentY += 4.5;
-                    doc.text(`${count2}`, startX + col.label, currentY);
-                    doc.text(
-                        `${diam2} mm`,
-                        startX + col.label + col.count,
-                        currentY,
-                    );
-                    currentY += 1.5;
+                if (damages.length === 0) {
+                    doc.text('0', startX + col.label, currentY);
+                    doc.text('-', startX + col.label + col.count, currentY);
+                } else {
+                    damages.forEach((dmg, idx) => {
+                        if (idx > 0) {
+                            currentY += 4.5;
+                        }
+                        doc.text(`${dmg.count}`, startX + col.label, currentY);
+                        doc.text(
+                            dmg.diam ? `${dmg.diam} mm` : '-',
+                            startX + col.label + col.count,
+                            currentY,
+                        );
+                    });
+                    if (damages.length > 1) {
+                        currentY += 1.5;
+                    }
                 }
                 currentY += 6.5;
             });
@@ -341,6 +366,7 @@ export default function CalculatorPage() {
                             name="vehicleYear"
                             value={formData.vehicleYear}
                             onChange={handleFieldChange}
+                            warning={isYearWarning ? 'Vozidlo starší roku 2020' : null}
                         />
                         <FormInput
                             label="Stav tachometru"

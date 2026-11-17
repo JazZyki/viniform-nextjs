@@ -17,23 +17,29 @@ export default function FormPart({
     damageOrder, // Přidáno: index v seřazeném poli (0, 1, 2...)
     isGlobalMode, // Přidáno: boolean, zda jedeme v Global režimu
 }) {
-    const [isOpen, setIsOpen] = useState(
-        (parseInt(formData[`${id}Count`]) || 0) > 0
+    const hasAnyDamage = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].some(
+        (num) => (parseInt(formData[num === 1 ? `${id}Count` : `${id}Count${num}`]) || 0) > 0
     );
+    const [isOpen, setIsOpen] = useState(hasAnyDamage);
     const images = formData[id] || [];
     const filledImages = images.filter((img) => img instanceof File);
 
     const canAddMore = filledImages.length < 5;
-    const count = parseInt(formData[`${id}Count`]) || 0;
-    const diameter = formData[`${id}Diameter`];
-    const count2 = parseInt(formData[`${id}Count2`]) || 0;
-    const diameter2 = formData[`${id}Diameter2`];
+
+    const totalCount = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].reduce(
+        (sum, num) => sum + (parseInt(formData[num === 1 ? `${id}Count` : `${id}Count${num}`]) || 0),
+        0
+    );
+
+    const damages = [];
+    for (let num = 1; num <= 10; num++) {
+        const cKey = num === 1 ? `${id}Count` : `${id}Count${num}`;
+        const dKey = num === 1 ? `${id}Diameter` : `${id}Diameter${num}`;
+        damages.push({ count: formData[cKey], diameter: formData[dKey] });
+    }
 
     const currentPrice = calculateDentPrice(
-        count,
-        diameter,
-        count2,
-        diameter2,
+        damages,
         formData[`${id}Alu`],
         formData[`${id}Lak`],
         isGlobalMode // Předáme informaci o ceníku do kalkulátoru
@@ -88,7 +94,7 @@ export default function FormPart({
                     <div className="flex flex-col gap-0.5">
                         <p
                             className={`font-bold uppercase tracking-tighter ${
-                                count > 0 ? 'text-maingreen' : 'text-gray-600'
+                                totalCount > 0 ? 'text-maingreen' : 'text-gray-600'
                             }`}
                         >
                             {label}
@@ -115,7 +121,7 @@ export default function FormPart({
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                                     Fotodokumentace (max 5):
                                 </p>
-                                {hasNoImage && count > 0 && (
+                                {hasNoImage && totalCount > 0 && (
                                     <span className="text-[#8f2215] text-[9px] font-black uppercase tracking-tighter animate-pulse">
                                         ⚠ Chybí foto
                                     </span>
@@ -125,7 +131,7 @@ export default function FormPart({
                                 {images.map(
                                     (file, index) =>
                                         file instanceof File && (
-                                            <ImagePreview
+                                             <ImagePreview
                                                 key={`${id}-img-${index}`}
                                                 file={file}
                                                 onRemove={() =>
@@ -163,79 +169,65 @@ export default function FormPart({
                     )}
 
                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <label>
-                                <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
-                                    Počet (1)
-                                </span>
-                                <input
-                                    type="number"
-                                    name={`${id}Count`}
-                                    value={Number(
-                                        formData[`${id}Count`]
-                                    ).toString()}
-                                    onChange={onChange}
-                                    className="w-full p-2 border rounded-lg bg-white h-[40px]"
-                                    onFocus={(e) =>
-                                        e.target.value === '0' &&
-                                        (e.target.value = '')
-                                    }
-                                />
-                            </label>
-                            <label>
-                                <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
-                                    Průměr (1)
-                                </span>
-                                <select
-                                    name={`${id}Diameter`}
-                                    value={formData[`${id}Diameter`] || ''}
-                                    onChange={onChange}
-                                    className="w-full p-2 border rounded-lg bg-white h-[40px]"
-                                >
-                                    <option value="">-</option>
-                                    {DENT_DIAMETERS.map((d) => (
-                                        <option key={d} value={d}>
-                                            {d} mm
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        </div>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                            const countKey = num === 1 ? `${id}Count` : `${id}Count${num}`;
+                            const diamKey = num === 1 ? `${id}Diameter` : `${id}Diameter${num}`;
+                            const prevCountKey = num === 2 ? `${id}Count` : `${id}Count${num - 1}`;
+                            const prevDiamKey = num === 2 ? `${id}Diameter` : `${id}Diameter${num - 1}`;
 
-                        {count > 0 && diameter !== '' && (
-                            <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-1 duration-300">
-                                <label>
-                                    <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
-                                        Počet (2)
-                                    </span>
-                                    <input
-                                        type="number"
-                                        name={`${id}Count2`}
-                                        value={formData[`${id}Count2`] || 0}
-                                        onChange={onChange}
-                                        className="w-full p-2 border rounded-lg bg-white h-[40px]"
-                                    />
-                                </label>
-                                <label>
-                                    <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
-                                        Průměr (2)
-                                    </span>
-                                    <select
-                                        name={`${id}Diameter2`}
-                                        value={formData[`${id}Diameter2`] || ''}
-                                        onChange={onChange}
-                                        className="w-full p-2 border rounded-lg bg-white h-[40px]"
-                                    >
-                                        <option value="">-</option>
-                                        {DENT_DIAMETERS.map((d) => (
-                                            <option key={d} value={d}>
-                                                {d} mm
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                            </div>
-                        )}
+                            const prevCount = parseInt(formData[prevCountKey]) || 0;
+                            const prevDiam = formData[prevDiamKey];
+                            const currentCount = parseInt(formData[countKey]) || 0;
+                            const currentDiam = formData[diamKey];
+
+                            const isVisible =
+                                num === 1 ||
+                                (prevCount > 0 && prevDiam !== '') ||
+                                currentCount > 0 ||
+                                Boolean(currentDiam);
+
+                            if (!isVisible) return null;
+
+                            return (
+                                <div key={num} className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-1 duration-300">
+                                    <label>
+                                        <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
+                                            Počet ({num})
+                                        </span>
+                                        <input
+                                            type="number"
+                                            name={countKey}
+                                            value={formData[countKey] !== undefined ? formData[countKey] : 0}
+                                            onChange={onChange}
+                                            className="w-full p-2 border rounded-lg bg-white h-[40px]"
+                                            min="0"
+                                            onFocus={(e) =>
+                                                e.target.value === '0' &&
+                                                (e.target.value = '')
+                                            }
+                                        />
+                                    </label>
+                                    <label>
+                                        <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">
+                                            Průměr ({num})
+                                        </span>
+                                        <select
+                                            name={diamKey}
+                                            value={formData[diamKey] || ''}
+                                            onChange={onChange}
+                                            className="w-full p-2 border rounded-lg bg-white h-[40px]"
+                                        >
+                                            <option value="">-</option>
+                                            {DENT_DIAMETERS.map((d) => (
+                                                <option key={d} value={d}>
+                                                    {d} mm
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <div className="flex flex-wrap justify-between gap-4 mt-4 bg-white p-3 rounded-lg border border-gray-100">
