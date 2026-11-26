@@ -8,7 +8,7 @@ import { saveAs } from 'file-saver';
 import Popup from 'reactjs-popup';
 import SignatureCanvas from 'react-signature-canvas';
 import { robotoBase64 } from '../../lib/fonts/Roboto-Condensed-normal';
-import { calculatePartPrice } from '../../lib/priceCalculator';
+import { calculatePartPrice, calculateTotalPartPrice, hasUnpricedDamage } from '../../lib/priceCalculator';
 import { CAR_PARTS, VEHICLE_BRANDS, REQUIRE_GLOBAL_PHOTOS, REQUIRE_PART_PHOTOS } from './config';
 import FormPart from './FormParts';
 import {
@@ -323,23 +323,29 @@ export default function FormPage({ initialTechnician }) {
 
     const getGrandTotal = () => {
         let baseSum = 0;
+        const unpricedParts = [];
+
         CAR_PARTS.forEach((part) => {
+            const partDamages = [];
             for (let i = 1; i <= 10; i++) {
                 const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
                 const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
                 const count = parseInt(formData[countKey]) || 0;
                 const diameter = formData[diamKey];
-
-                const partPrice = calculatePartPrice(
-                    count,
-                    diameter,
-                    part.category,
-                    formData[`${part.id}Alu`],
-                    formData[`${part.id}Lak`]
-                );
-
-                baseSum += partPrice;
+                partDamages.push({ count, diameter });
             }
+
+            if (hasUnpricedDamage(partDamages)) {
+                unpricedParts.push(part.label);
+            }
+
+            const partPrice = calculateTotalPartPrice(
+                partDamages,
+                part.category,
+                formData[`${part.id}Alu`],
+                formData[`${part.id}Lak`]
+            );
+            baseSum += (partPrice || 0);
         });
 
         const fee = baseSum * 0.02;
@@ -347,6 +353,8 @@ export default function FormPage({ initialTechnician }) {
             base: Math.round(baseSum),
             fee: Math.round(fee),
             total: Math.round(baseSum + fee),
+            hasUnpricedDamage: unpricedParts.length > 0,
+            unpricedParts,
         };
     };
 
@@ -382,7 +390,19 @@ export default function FormPage({ initialTechnician }) {
             doc.setFont('RobotoCustom');
             doc.setFontSize(13); // Nastav velikost písma
 
-            doc.text(`${pricing.total.toLocaleString()} Kč`, 14, 246);
+            if (pricing.hasUnpricedDamage) {
+                if (pricing.total > 0) {
+                    doc.setFontSize(10);
+                    doc.text(`od ${pricing.total.toLocaleString()} Kč (+ upřesnění)`, 14, 246);
+                    doc.setFontSize(13);
+                } else {
+                    doc.setFontSize(11);
+                    doc.text('Cena bude upřesněna', 14, 246);
+                    doc.setFontSize(13);
+                }
+            } else {
+                doc.text(`${pricing.total.toLocaleString()} Kč`, 14, 246);
+            }
 
             // Mapování textů do PDF (Dle tvých pozic)
             const txtPos = {
@@ -601,6 +621,39 @@ export default function FormPage({ initialTechnician }) {
 
     return (
         <div className="max-w-4xl mx-auto p-4 bg-white min-h-screen">
+            {/* Horní globální navigace a indikátor sekce */}
+            <div className="flex items-center justify-between gap-2 mb-6 pb-3 border-b border-gray-200">
+                <button
+                    type="button"
+                    onClick={() => router.push('/splitter')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-maingreen rounded-lg border border-gray-300 transition-colors shadow-xs"
+                >
+                    <svg
+                        className="w-4 h-4 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+                        />
+                    </svg>
+                    Zpět na rozcestník
+                </button>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider hidden xs:inline">
+                        Formulář:
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider bg-green-100 text-maingreen border border-green-200 shadow-xs">
+                        <span className="w-2 h-2 rounded-full bg-maingreen"></span>
+                        Kroupy
+                    </span>
+                </div>
+            </div>
+
             <div className="flex justify-between mb-8">
                 {[1, 2, 3].map((s) => (
                     <div
@@ -619,23 +672,25 @@ export default function FormPage({ initialTechnician }) {
             <form onSubmit={handleSubmit} className="pb-24">
                 {step === 1 && (
                     <div className="flex flex-col">
-                        <div className="flex flex-wrap items-center gap-2 mb-6 p-2 bg-slate-100 rounded-lg border border-slate-200">
-                            <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center justify-between gap-2 mb-6 p-2 bg-slate-100 rounded-lg border border-slate-200">
+                            <button
+                                type="button"
+                                onClick={() => exportOrderToJson(formData)}
+                                className="text-sm bg-white border text-maingreen border-maingreen px-3 py-1.5 rounded hover:bg-green-100 flex items-center gap-1 shadow-sm font-semibold"
+                                title="Exportovat textová data do JSON"
+                            >
+                                Export dat
+                            </button>
+                            <div className="relative">
                                 <button
-                                    onClick={() => router.push('/splitter')} // Uprav cestu dle potřeby
-                                    className="px-4 py-2 text-md font-bold border border-gray-600 rounded text-gray-600 hover:text-maingreen hover:border-maingreen transition-colors"
+                                    type="button"
+                                    onClick={handleLoadHistory}
+                                    className="bg-maingreen text-white px-4 py-2 rounded text-md font-bold shadow-sm hover:bg-green-700 transition-all"
                                 >
-                                    Zpět na rozcestník
+                                    Historie zakázek
                                 </button>
-                                <div className="relative">
-                                    <button
-                                        onClick={handleLoadHistory}
-                                        className="bg-maingreen text-white px-4 py-2 rounded text-md font-bold shadow-sm hover:bg-green-700 transition-all"
-                                    >
-                                        Historie zakázek
-                                    </button>
-                                    {/* Dropdown / Select menu pro historii */}
-                                    {showHistory && (
+                                {/* Dropdown / Select menu pro historii */}
+                                {showHistory && (
                                         <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-300 rounded-xl shadow-2xl z-[100] max-h-96 overflow-y-auto">
                                             <div className="p-3 border-b bg-slate-50 font-bold text-xs uppercase text-gray-500">
                                                 Archiv (posledních 30 dní)
@@ -677,17 +732,6 @@ export default function FormPage({ initialTechnician }) {
                                     )}
                                 </div>
                             </div>
-
-                            <div className="flex items-center justify-between w-full">
-                                <button
-                                    onClick={() => exportOrderToJson(formData)}
-                                    className="text-sm bg-white border text-maingreen border-maingreen px-3 py-1.5 rounded hover:bg-green-100 flex items-center gap-1 shadow-sm"
-                                    title="Exportovat textová data do JSON"
-                                >
-                                    Export
-                                </button>
-                            </div>
-                        </div>
                         <div className="space-y-6">
                             <div className="bg-gray-50 p-4 rounded-lg border">
                                 <h2 className="text-lg font-bold mb-4 text-maingreen uppercase tracking-wide border-b pb-2">
@@ -1043,29 +1087,64 @@ export default function FormPage({ initialTechnician }) {
                         </div>
                         {isAdminOrEditor && (
                             <div className="mt-10 p-6 bg-green-50 rounded-xl border-2 border-maingreen">
-                                <h3 className="text-lg font-bold text-maingreen mb-2 uppercase tracking-tight">
-                                    Souhrn kalkulace
-                                </h3>
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Základní oprava:</span>
-                                        <span>
-                                            {pricing.base.toLocaleString()} Kč
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-lg font-bold text-maingreen uppercase tracking-tight">
+                                        {pricing.hasUnpricedDamage && pricing.base > 0
+                                            ? 'Předběžná kalkulace'
+                                            : 'Souhrn kalkulace'}
+                                    </h3>
+                                    {pricing.hasUnpricedDamage && (
+                                        <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-amber-300">
+                                            {pricing.base > 0 ? 'Bude navýšeno' : 'K individuálnímu nacenění'}
                                         </span>
-                                    </div>
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Režijní materiál (2%):</span>
-                                        <span>
-                                            {pricing.fee.toLocaleString()} Kč
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between text-xl font-black text-maingreen border-t pt-2 mt-2">
-                                        <span>CELKEM BEZ DPH:</span>
-                                        <span>
-                                            {pricing.total.toLocaleString()} Kč
-                                        </span>
-                                    </div>
+                                    )}
                                 </div>
+                                {pricing.hasUnpricedDamage && pricing.base === 0 ? (
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3 border-t border-green-200 mt-2">
+                                        <span className="font-bold text-gray-700">Kalkulace zakázky:</span>
+                                        <span className="inline-flex items-center justify-center bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-base font-bold border border-amber-200">
+                                            Cena bude upřesněna
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between text-gray-600">
+                                            <span>
+                                                {pricing.hasUnpricedDamage
+                                                    ? 'Ceníková oprava (≤ 40 mm):'
+                                                    : 'Základní oprava:'}
+                                            </span>
+                                            <span>
+                                                {pricing.base.toLocaleString()} Kč
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-gray-600">
+                                            <span>Režijní materiál (2%):</span>
+                                            <span>
+                                                {pricing.fee.toLocaleString()} Kč
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-xl font-black text-maingreen border-t pt-2 mt-2">
+                                            <span>
+                                                {pricing.hasUnpricedDamage
+                                                    ? 'ZÁKLAD OD (BEZ DPH):'
+                                                    : 'CELKEM BEZ DPH:'}
+                                            </span>
+                                            <span>
+                                                {pricing.hasUnpricedDamage ? 'od ' : ''}
+                                                {pricing.total.toLocaleString()} Kč
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                {pricing.hasUnpricedDamage && pricing.unpricedParts.length > 0 && (
+                                    <div className="mt-3 pt-3 border-t border-green-200 text-xs text-gray-600">
+                                        <span className="font-bold text-amber-800">
+                                            K individuálnímu nacenění (&gt; 40 mm):
+                                        </span>{' '}
+                                        {pricing.unpricedParts.join(', ')}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

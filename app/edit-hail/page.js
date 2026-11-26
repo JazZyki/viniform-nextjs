@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { FormInput } from '../kroupy/FormInput';
-import { CAR_PARTS, VEHICLE_BRANDS } from '../kroupy/config';
-import { calculatePartPrice } from '../../lib/priceCalculator';
+import { CAR_PARTS, VEHICLE_BRANDS, DENT_DIAMETERS } from '../kroupy/config';
+import { calculatePartPrice, calculateTotalPartPrice, hasUnpricedDamage } from '../../lib/priceCalculator';
 import { generateFinalPDF } from '../../lib/pdfGenerator';
 import { useRouter } from 'next/navigation';
 
@@ -86,21 +86,38 @@ export default function CalculatorPage() {
 
     const getPricing = () => {
         let baseSum = 0;
+        const unpricedParts = [];
         CAR_PARTS.forEach((part) => {
+            const partDamages = [];
             for (let i = 1; i <= 10; i++) {
                 const countKey = i === 1 ? `${part.id}Count` : `${part.id}Count${i}`;
                 const diamKey = i === 1 ? `${part.id}Diameter` : `${part.id}Diameter${i}`;
                 const count = parseInt(formData[countKey]) || 0;
                 const diam = formData[diamKey];
-                const alu = formData[`${part.id}Alu`];
-                const lak = formData[`${part.id}Lak`];
-
-                baseSum += calculatePartPrice(count, diam, part.category, alu, lak);
+                partDamages.push({ count, diameter: diam });
             }
+
+            if (hasUnpricedDamage(partDamages)) {
+                unpricedParts.push(part.label);
+            }
+
+            const partPrice = calculateTotalPartPrice(
+                partDamages,
+                part.category,
+                formData[`${part.id}Alu`],
+                formData[`${part.id}Lak`]
+            );
+            baseSum += (partPrice || 0);
         });
-        // Přidáme 2% režii
-        const total = Math.round(baseSum * 1.02);
-        return { total };
+        const fee = baseSum * 0.02;
+        const total = Math.round(baseSum + fee);
+        return {
+            base: Math.round(baseSum),
+            fee: Math.round(fee),
+            total,
+            hasUnpricedDamage: unpricedParts.length > 0,
+            unpricedParts,
+        };
     };
 
     const pricing = getPricing();
@@ -320,9 +337,11 @@ export default function CalculatorPage() {
                                                         className="w-full border rounded-md p-1 font-bold bg-white"
                                                     >
                                                         <option value="">-</option>
-                                                        <option value="20">20mm</option>
-                                                        <option value="30">30mm</option>
-                                                        <option value="40">40mm</option>
+                                                        {DENT_DIAMETERS.map((d) => (
+                                                            <option key={d} value={d}>
+                                                                {d} mm
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                             </div>
@@ -382,7 +401,20 @@ export default function CalculatorPage() {
                             Konečná cena:
                         </span>
                         <div className="text-3xl font-black text-maingreen leading-none">
-                            {pricing.total.toLocaleString()} Kč
+                            {pricing.hasUnpricedDamage && pricing.total > 0 ? (
+                                <div className="flex flex-col">
+                                    <span className="text-xl">od {pricing.total.toLocaleString()} Kč</span>
+                                    <span className="text-xs text-amber-700 font-bold mt-1">
+                                        (+ k individuálnímu nacenění: {pricing.unpricedParts.join(', ')})
+                                    </span>
+                                </div>
+                            ) : pricing.hasUnpricedDamage ? (
+                                <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-base font-bold border border-amber-200">
+                                    Cena bude upřesněna
+                                </span>
+                            ) : (
+                                `${pricing.total.toLocaleString()} Kč`
+                            )}
                         </div>
                     </div>
                     <button

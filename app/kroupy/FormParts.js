@@ -1,7 +1,7 @@
 'use client';
-import { calculateTotalPartPrice } from '../../lib/priceCalculator';
+import { calculateTotalPartPrice, hasUnpricedDamage, hasPricedDamage } from '../../lib/priceCalculator';
 import { ImagePreview } from './ImagePreview'; // Importujeme naši novou komponentu
-import { REQUIRE_PART_PHOTOS } from './config';
+import { REQUIRE_PART_PHOTOS, DENT_DIAMETERS } from './config';
 
 export default function FormPart({
     id,
@@ -27,6 +27,8 @@ export default function FormPart({
         damages.push({ count: formData[cKey], diameter: formData[dKey] });
     }
 
+    const isPartUnpriced = hasUnpricedDamage(damages);
+    const isPartPriced = hasPricedDamage(damages);
     const currentPrice = calculateTotalPartPrice(
         damages,
         category,
@@ -49,10 +51,20 @@ export default function FormPart({
                         ⚠ Povinná fotografie dílu
                     </span>
                 )}
-                {isAdminOrEditor && currentPrice > 0 && (
-                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold border border-green-200">
-                        {currentPrice.toLocaleString()} Kč
+                {isPartUnpriced && isPartPriced && currentPrice > 0 ? (
+                    <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-bold border border-amber-200">
+                        od {currentPrice.toLocaleString()} Kč (+ upřesnění)
                     </span>
+                ) : isPartUnpriced ? (
+                    <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-bold border border-amber-200">
+                        Cena bude upřesněna
+                    </span>
+                ) : (
+                    isAdminOrEditor && currentPrice > 0 && (
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold border border-green-200">
+                            {currentPrice.toLocaleString()} Kč
+                        </span>
+                    )
                 )}
             </div>
 
@@ -147,9 +159,11 @@ export default function FormPart({
                                     className="w-full p-2 border rounded-lg bg-white h-[42px]"
                                 >
                                     <option value="">Vyberte...</option>
-                                    <option value="20">20 mm</option>
-                                    <option value="30">30 mm</option>
-                                    <option value="40">40 mm</option>
+                                    {DENT_DIAMETERS.map((d) => (
+                                        <option key={d} value={d}>
+                                            {d} mm
+                                        </option>
+                                    ))}
                                 </select>
                             </label>
                         </div>

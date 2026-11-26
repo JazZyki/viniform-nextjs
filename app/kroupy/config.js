@@ -26,3 +26,8 @@ export const VEHICLE_BRANDS = [
     "Opel", "Peugeot", "Renault", "Seat", "Subaru", "Suzuki", "Škoda", 
     "Toyota", "Volkswagen", "Volvo", "Jiné - upřesním níže"
 ];
+
+export const DENT_DIAMETERS = [
+    20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150
+];
+
